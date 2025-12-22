@@ -9,6 +9,7 @@ This repo currently includes:
 - `wp-plugin-development`
 - `wp-interactivity-api`
 - `wp-abilities-api`
+- `wp-wpcli-and-ops`
 
 Planned next skills (not yet implemented):
 
@@ -17,4 +18,3 @@ Planned next skills (not yet implemented):
 - `wp-testing`
 - `wp-performance`
 - `wp-security`
-- `wp-wpcli-and-ops`

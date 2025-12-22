@@ -362,9 +362,50 @@ function main() {
     maxDepth: 8,
   });
 
+  const wpCliConfigBasenames = new Set([
+    "wp-cli.yml",
+    "wp-cli.yaml",
+    "wp-cli.local.yml",
+    "wp-cli.local.yaml",
+    ".wp-cli.yml",
+    ".wp-cli.yaml",
+  ]);
+  const { results: wpCliConfigFiles, truncated: wpCliConfigTruncated } = findFilesRecursive(
+    repoRoot,
+    (p) => wpCliConfigBasenames.has(path.basename(p)),
+    { maxFiles: 6000, maxDepth: 6 }
+  );
+
+  const composerRequire = composerJson?.require && typeof composerJson.require === "object" ? composerJson.require : {};
+  const composerRequireDev =
+    composerJson?.["require-dev"] && typeof composerJson["require-dev"] === "object" ? composerJson["require-dev"] : {};
+  const composerHasWpCli = Boolean(
+    composerRequire["wp-cli/wp-cli"] ||
+      composerRequireDev["wp-cli/wp-cli"] ||
+      composerRequire["wp-cli/wp-cli-bundle"] ||
+      composerRequireDev["wp-cli/wp-cli-bundle"]
+  );
+
+  const wpCliTokenScan = scanForTokens(repoRoot, {
+    tokens: [
+      "wp search-replace",
+      "wp db export",
+      "wp db import",
+      "wp cron event",
+      "wp cache flush",
+      "wp rewrite flush",
+      "wp plugin update",
+      "wp theme update",
+    ],
+    exts: [".sh", ".yml", ".yaml", ".js", ".ts", ".php", ".json"],
+    maxFiles: 2500,
+    maxDepth: 8,
+  });
+
   const usesInteractivityApi = pkgHasInteractivity || Object.keys(interactivityScan.matches).length > 0;
   const usesAbilitiesApi = pkgHasAbilities || Object.keys(abilitiesScan.matches).length > 0;
   const usesInnerBlocks = Object.keys(innerBlocksScan.matches).length > 0;
+  const usesWpCli = composerHasWpCli || wpCliConfigFiles.length > 0 || Object.keys(wpCliTokenScan.matches).length > 0;
 
   const phpunitXml = [];
   for (const candidate of ["phpunit.xml", "phpunit.xml.dist"]) {
@@ -414,6 +455,7 @@ function main() {
     usesInteractivityApi,
     usesAbilitiesApi,
     usesInnerBlocks,
+    usesWpCli,
     interactivityHints: {
       packageJson: pkgHasInteractivity,
       matches: interactivityScan.matches,
@@ -427,6 +469,13 @@ function main() {
     innerBlocksHints: {
       matches: innerBlocksScan.matches,
       scanTruncated: innerBlocksScan.truncated,
+    },
+    wpCliHints: {
+      configFiles: wpCliConfigFiles.map((p) => path.relative(repoRoot, p)).slice(0, 50),
+      configScanTruncated: wpCliConfigTruncated,
+      composerJson: composerHasWpCli,
+      matches: wpCliTokenScan.matches,
+      scanTruncated: wpCliTokenScan.truncated,
     },
     blockJsonFiles: blockJsonFiles.map((p) => path.relative(repoRoot, p)).slice(0, 50),
     themeJsonFiles: themeJsonFiles.map((p) => path.relative(repoRoot, p)).slice(0, 50),

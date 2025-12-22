@@ -10,6 +10,7 @@ Current skills:
 - `skills/wp-plugin-development/SKILL.md`
 - `skills/wp-interactivity-api/SKILL.md`
 - `skills/wp-abilities-api/SKILL.md`
+- `skills/wp-wpcli-and-ops/SKILL.md`
 
 Quick check:
 

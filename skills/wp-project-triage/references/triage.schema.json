@@ -58,9 +58,11 @@
         "usesInteractivityApi": { "type": "boolean" },
         "usesAbilitiesApi": { "type": "boolean" },
         "usesInnerBlocks": { "type": "boolean" },
+        "usesWpCli": { "type": "boolean" },
         "interactivityHints": { "type": "object", "additionalProperties": true },
         "abilitiesHints": { "type": "object", "additionalProperties": true },
-        "innerBlocksHints": { "type": "object", "additionalProperties": true }
+        "innerBlocksHints": { "type": "object", "additionalProperties": true },
+        "wpCliHints": { "type": "object", "additionalProperties": true }
       },
       "additionalProperties": true
     },

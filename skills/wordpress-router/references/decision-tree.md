@@ -21,6 +21,10 @@ If multiple kinds match, prefer the most specific:
 
 Route by intent even if repo kind is broad (like `wp-site`):
 
+- **Interactivity API / data-wp-* directives / @wordpress/interactivity / viewScriptModule**
+  - Route → `wp-interactivity-api`.
+- **Abilities API / wp_register_ability / wp-abilities/v1 / @wordpress/abilities**
+  - Route → `wp-abilities-api`.
 - **Blocks / block.json / registerBlockType / attributes / save serialization**
   - Route → `wp-block-development` (planned).
 - **theme.json / Global Styles / templates/*.html / patterns/**
@@ -43,4 +47,3 @@ Route by intent even if repo kind is broad (like `wp-site`):
 - Verify detected tooling before suggesting commands (Composer vs npm/yarn/pnpm).
 - Prefer existing lint/test scripts if present.
 - If version constraints aren’t detectable, ask for target WP core and PHP versions.
-

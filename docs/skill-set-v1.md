@@ -4,6 +4,8 @@ This repo currently includes:
 
 - `wordpress-router`
 - `wp-project-triage`
+- `wp-interactivity-api`
+- `wp-abilities-api`
 
 Planned next skills (not yet implemented):
 
@@ -16,4 +18,3 @@ Planned next skills (not yet implemented):
 - `wp-performance`
 - `wp-security`
 - `wp-wpcli-and-ops`
-

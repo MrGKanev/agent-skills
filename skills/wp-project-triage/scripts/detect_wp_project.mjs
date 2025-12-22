@@ -33,6 +33,38 @@ function readFileSafe(p, maxBytes = 256 * 1024) {
   }
 }
 
+function scanForTokens(repoRoot, { tokens, exts, maxFiles = 2500, maxDepth = 8 }) {
+  const loweredTokens = tokens.map((t) => t.toLowerCase());
+  const matches = new Map();
+
+  const { results: files, truncated } = findFilesRecursive(
+    repoRoot,
+    (p) => {
+      const ext = path.extname(p).toLowerCase();
+      return exts.includes(ext);
+    },
+    { maxFiles, maxDepth }
+  );
+
+  for (const filePath of files) {
+    const contents = readFileSafe(filePath, 128 * 1024);
+    if (!contents) continue;
+    const haystack = contents.toLowerCase();
+
+    for (let i = 0; i < loweredTokens.length; i += 1) {
+      const token = loweredTokens[i];
+      if (matches.has(token)) continue;
+      if (haystack.includes(token)) matches.set(token, path.relative(repoRoot, filePath));
+    }
+    if (matches.size === loweredTokens.length) break;
+  }
+
+  return {
+    truncated,
+    matches: Object.fromEntries([...matches.entries()]),
+  };
+}
+
 function existsFile(p) {
   const st = statSafe(p);
   return Boolean(st && st.isFile());
@@ -249,6 +281,13 @@ function main() {
       packageJson?.scripts?.lint?.includes("wp-scripts")
   );
 
+  const pkgHasInteractivity = Boolean(
+    packageJson?.devDependencies?.["@wordpress/interactivity"] || packageJson?.dependencies?.["@wordpress/interactivity"]
+  );
+  const pkgHasAbilities = Boolean(
+    packageJson?.devDependencies?.["@wordpress/abilities"] || packageJson?.dependencies?.["@wordpress/abilities"]
+  );
+
   const hasWpContentDir = existsDir(wpContent);
   const hasPluginsDir = existsDir(pluginsDir);
   const hasThemesDir = existsDir(themesDir);
@@ -295,6 +334,30 @@ function main() {
   const isBlockTheme = themeJsonFiles.length > 0 && templatesDirCandidates.some((p) => existsDir(p));
   const isBlockPlugin = blockJsonFiles.length > 0;
 
+  const interactivityScan = scanForTokens(repoRoot, {
+    tokens: ["data-wp-interactive", "@wordpress/interactivity", "viewScriptModule"],
+    exts: [".php", ".js", ".ts", ".tsx", ".json", ".html"],
+    maxFiles: 2500,
+    maxDepth: 8,
+  });
+
+  const abilitiesScan = scanForTokens(repoRoot, {
+    tokens: [
+      "wp_register_ability(",
+      "wp_register_ability_category(",
+      "wp_abilities_api_init",
+      "wp_abilities_api_categories_init",
+      "wp-abilities/v1",
+      "@wordpress/abilities",
+    ],
+    exts: [".php", ".js", ".ts", ".tsx"],
+    maxFiles: 2500,
+    maxDepth: 8,
+  });
+
+  const usesInteractivityApi = pkgHasInteractivity || Object.keys(interactivityScan.matches).length > 0;
+  const usesAbilitiesApi = pkgHasAbilities || Object.keys(abilitiesScan.matches).length > 0;
+
   const phpunitXml = [];
   for (const candidate of ["phpunit.xml", "phpunit.xml.dist"]) {
     const full = path.join(repoRoot, candidate);
@@ -340,6 +403,18 @@ function main() {
     detectedThemeName,
     isBlockPlugin,
     isBlockTheme,
+    usesInteractivityApi,
+    usesAbilitiesApi,
+    interactivityHints: {
+      packageJson: pkgHasInteractivity,
+      matches: interactivityScan.matches,
+      scanTruncated: interactivityScan.truncated,
+    },
+    abilitiesHints: {
+      packageJson: pkgHasAbilities,
+      matches: abilitiesScan.matches,
+      scanTruncated: abilitiesScan.truncated,
+    },
     blockJsonFiles: blockJsonFiles.map((p) => path.relative(repoRoot, p)).slice(0, 50),
     themeJsonFiles: themeJsonFiles.map((p) => path.relative(repoRoot, p)).slice(0, 50),
     scanTruncated,
@@ -396,4 +471,3 @@ function main() {
 }
 
 main();
-

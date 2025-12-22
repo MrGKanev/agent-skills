@@ -54,6 +54,11 @@
           },
           "additionalProperties": true
         }
+        ,
+        "usesInteractivityApi": { "type": "boolean" },
+        "usesAbilitiesApi": { "type": "boolean" },
+        "interactivityHints": { "type": "object", "additionalProperties": true },
+        "abilitiesHints": { "type": "object", "additionalProperties": true }
       },
       "additionalProperties": true
     },
@@ -131,4 +136,3 @@
   },
   "additionalProperties": true
 }
-

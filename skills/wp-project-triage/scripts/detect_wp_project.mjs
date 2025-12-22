@@ -194,6 +194,39 @@ function parseComposerJson(repoRoot) {
   }
 }
 
+function detectConfigConstants(repoRoot) {
+  const { results: configFiles } = findFilesRecursive(repoRoot, (p) => path.basename(p) === "wp-config.php", {
+    maxFiles: 4000,
+    maxDepth: 4,
+  });
+  const configPath = configFiles[0] ?? null;
+  if (!configPath) {
+    return { source: null, constants: {} };
+  }
+
+  const contents = readFileSafe(configPath, 256 * 1024);
+  if (!contents) return { source: path.relative(repoRoot, configPath), constants: {} };
+
+  const c = contents;
+  const enabled = (name) =>
+    new RegExp(`define\\(\\s*['"]${name}['"]\\s*,\\s*(true|1)\\s*\\)`, "i").test(c) ||
+    new RegExp(`\\b${name}\\b\\s*=\\s*(true|1)`, "i").test(c);
+
+  const mentioned = (name) => new RegExp(`\\b${name}\\b`, "i").test(c);
+
+  return {
+    source: path.relative(repoRoot, configPath),
+    constants: {
+      savequeriesMentioned: mentioned("SAVEQUERIES"),
+      savequeriesEnabled: enabled("SAVEQUERIES"),
+      wpDebugMentioned: mentioned("WP_DEBUG"),
+      wpDebugEnabled: enabled("WP_DEBUG"),
+      disableWpCronMentioned: mentioned("DISABLE_WP_CRON"),
+      disableWpCronEnabled: enabled("DISABLE_WP_CRON"),
+    },
+  };
+}
+
 function detectKinds(repoRoot, signals) {
   const kinds = new Set();
 
@@ -292,6 +325,8 @@ function main() {
   const hasPluginsDir = existsDir(pluginsDir);
   const hasThemesDir = existsDir(themesDir);
   const hasMuPluginsDir = existsDir(muPluginsDir);
+
+  const config = detectConfigConstants(repoRoot);
 
   const pluginCandidates = [];
   const themeCandidates = [];
@@ -407,6 +442,14 @@ function main() {
   const usesInnerBlocks = Object.keys(innerBlocksScan.matches).length > 0;
   const usesWpCli = composerHasWpCli || wpCliConfigFiles.length > 0 || Object.keys(wpCliTokenScan.matches).length > 0;
 
+  const wpContentRoot = path.join(repoRoot, "wp-content");
+  const hasObjectCacheDropin = existsFile(path.join(wpContentRoot, "object-cache.php"));
+  const hasAdvancedCacheDropin = existsFile(path.join(wpContentRoot, "advanced-cache.php"));
+  const hasDbDropin = existsFile(path.join(wpContentRoot, "db.php"));
+  const hasSunriseDropin = existsFile(path.join(wpContentRoot, "sunrise.php"));
+  const hasQueryMonitorPlugin = existsDir(path.join(wpContentRoot, "plugins", "query-monitor"));
+  const hasPerformanceLabPlugin = existsDir(path.join(wpContentRoot, "plugins", "performance-lab"));
+
   const phpunitXml = [];
   for (const candidate of ["phpunit.xml", "phpunit.xml.dist"]) {
     const full = path.join(repoRoot, candidate);
@@ -456,6 +499,20 @@ function main() {
     usesAbilitiesApi,
     usesInnerBlocks,
     usesWpCli,
+    performanceHints: {
+      wpConfig: config.source,
+      constants: config.constants,
+      dropins: {
+        objectCache: hasObjectCacheDropin,
+        advancedCache: hasAdvancedCacheDropin,
+        db: hasDbDropin,
+        sunrise: hasSunriseDropin,
+      },
+      plugins: {
+        queryMonitor: hasQueryMonitorPlugin,
+        performanceLab: hasPerformanceLabPlugin,
+      },
+    },
     interactivityHints: {
       packageJson: pkgHasInteractivity,
       matches: interactivityScan.matches,

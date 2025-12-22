@@ -40,7 +40,7 @@ Route by intent even if repo kind is broad (like `wp-site`):
 - **Testing / PHPUnit / wp-env / Playwright**
   - Route → `wp-testing` (planned).
 - **Performance / caching / query profiling / editor slowness**
-  - Route → `wp-performance` (planned).
+  - Route → `wp-performance`.
 - **Security / nonces / capabilities / sanitization/escaping / uploads**
   - Route → `wp-security` (planned).
 

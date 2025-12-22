@@ -10,11 +10,11 @@ This repo currently includes:
 - `wp-interactivity-api`
 - `wp-abilities-api`
 - `wp-wpcli-and-ops`
+- `wp-performance`
 
 Planned next skills (not yet implemented):
 
 - `wp-rest-api`
 - `wp-build-tooling`
 - `wp-testing`
-- `wp-performance`
 - `wp-security`

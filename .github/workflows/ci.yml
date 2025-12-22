@@ -34,3 +34,4 @@ jobs:
           skills-ref validate skills/wp-interactivity-api
           skills-ref validate skills/wp-abilities-api
           skills-ref validate skills/wp-wpcli-and-ops
+          skills-ref validate skills/wp-performance

@@ -59,6 +59,7 @@
         "usesAbilitiesApi": { "type": "boolean" },
         "usesInnerBlocks": { "type": "boolean" },
         "usesWpCli": { "type": "boolean" },
+        "performanceHints": { "type": "object", "additionalProperties": true },
         "interactivityHints": { "type": "object", "additionalProperties": true },
         "abilitiesHints": { "type": "object", "additionalProperties": true },
         "innerBlocksHints": { "type": "object", "additionalProperties": true },

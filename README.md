@@ -11,6 +11,7 @@ Current skills:
 - `skills/wp-interactivity-api/SKILL.md`
 - `skills/wp-abilities-api/SKILL.md`
 - `skills/wp-wpcli-and-ops/SKILL.md`
+- `skills/wp-performance/SKILL.md`
 
 Quick check:
 

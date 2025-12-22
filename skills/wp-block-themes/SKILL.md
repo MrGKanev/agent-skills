@@ -32,7 +32,19 @@ Use this skill for block theme work such as:
 
 If multiple themes exist, pick one and scope all changes to that theme root.
 
-### 1) Confirm theme type and override expectations
+### 1) Create a new block theme (if needed)
+
+If you are creating a new block theme from scratch (or converting a classic theme):
+
+- Prefer starting from a known-good scaffold (or exporting from a WP environment) rather than guessing file layout.
+- Be explicit about the minimum supported WordPress version because `theme.json` schema versions differ.
+
+Read:
+- `references/creating-new-block-theme.md`
+
+After creating the theme root, re-run `detect_block_themes` and continue below.
+
+### 2) Confirm theme type and override expectations
 
 - Block theme indicators:
   - `theme.json` present
@@ -44,7 +56,7 @@ If multiple themes exist, pick one and scope all changes to that theme root.
 Read:
 - `references/debugging.md` (style hierarchy + fastest checks)
 
-### 2) Make `theme.json` changes safely
+### 3) Make `theme.json` changes safely
 
 Decide whether you are changing:
 
@@ -54,7 +66,7 @@ Decide whether you are changing:
 Read:
 - `references/theme-json.md`
 
-### 3) Templates and template parts
+### 4) Templates and template parts
 
 - Templates live under `templates/` and are HTML.
 - Template parts live under `parts/` and must not be nested in subdirectories.
@@ -62,14 +74,14 @@ Read:
 Read:
 - `references/templates-and-parts.md`
 
-### 4) Patterns
+### 5) Patterns
 
 Prefer filesystem patterns under `patterns/` when you want theme-owned patterns.
 
 Read:
 - `references/patterns.md`
 
-### 5) Style variations
+### 6) Style variations
 
 Style variations are JSON files under `styles/`. Note: once a user picks a style variation, that selection is stored in the DB, so changing the file may not “update what the user sees” automatically.
 
@@ -101,4 +113,3 @@ Common issues:
 If upstream behavior is unclear, consult canonical docs:
 
 - Theme Handbook and Block Editor Handbook for `theme.json`, templates, patterns, and style variations.
-

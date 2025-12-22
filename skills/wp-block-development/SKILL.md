@@ -34,7 +34,22 @@ Use this skill for block work such as:
 
 If this repo is a full site (`wp-content/` present), be explicit about *which* plugin/theme contains the block.
 
-### 1) Pick the right block model
+### 1) Create a new block (if needed)
+
+If you are creating a new block, prefer scaffolding rather than hand-rolling structure:
+
+- Use `@wordpress/create-block` to scaffold a modern block/plugin setup.
+- If you need Interactivity API from day 1, use the interactive template.
+
+Read:
+- `references/creating-new-blocks.md`
+
+After scaffolding:
+
+1. Re-run the block list script and confirm the new block root.
+2. Continue with the remaining steps (model choice, metadata, registration, serialization).
+
+### 2) Pick the right block model
 
 - **Static block** (markup saved into post content): implement `save()`; keep attributes serialization stable.
 - **Dynamic block** (server-rendered): use `render` in `block.json` (or `render_callback` in PHP) and keep `save()` minimal or `null`.
@@ -42,7 +57,7 @@ If this repo is a full site (`wp-content/` present), be explicit about *which* p
   - Prefer `viewScriptModule` for modern module-based view scripts where supported.
   - If you’re working primarily on `data-wp-*` directives or stores, also use `wp-interactivity-api`.
 
-### 2) Update `block.json` safely
+### 3) Update `block.json` safely
 
 Make changes in the block’s `block.json`, then confirm registration matches metadata.
 
@@ -55,7 +70,7 @@ Common pitfalls:
 - changing saved markup without adding `deprecated` causes “Invalid block”
 - adding attributes without defining source/serialization correctly causes “attribute not saving”
 
-### 3) Register the block (server-side preferred)
+### 4) Register the block (server-side preferred)
 
 Prefer PHP registration using metadata, especially when:
 
@@ -66,7 +81,7 @@ Prefer PHP registration using metadata, especially when:
 Read and apply:
 - `references/registration.md`
 
-### 4) Implement edit/save/render patterns
+### 5) Implement edit/save/render patterns
 
 Follow wrapper attribute best practices:
 
@@ -78,7 +93,17 @@ Read:
 - `references/supports-and-wrappers.md`
 - `references/dynamic-rendering.md` (if dynamic)
 
-### 5) Attributes and serialization
+### 6) Inner blocks (block composition)
+
+If your block is a “container” that nests other blocks, treat Inner Blocks as a first-class feature:
+
+- Use `useInnerBlocksProps()` to integrate inner blocks with wrapper props.
+- Keep migrations in mind if you change inner markup.
+
+Read:
+- `references/inner-blocks.md`
+
+### 7) Attributes and serialization
 
 Before changing attributes:
 
@@ -88,7 +113,7 @@ Before changing attributes:
 Read:
 - `references/attributes-and-serialization.md`
 
-### 6) Migrations and deprecations (avoid “Invalid block”)
+### 8) Migrations and deprecations (avoid “Invalid block”)
 
 If you change saved markup or attributes:
 
@@ -98,7 +123,7 @@ If you change saved markup or attributes:
 Read:
 - `references/deprecations.md`
 
-### 7) Tooling and verification commands
+### 9) Tooling and verification commands
 
 Prefer whatever the repo already uses:
 
@@ -130,4 +155,3 @@ If you’re uncertain about upstream behavior/version support, consult canonical
 
 - WordPress Developer Resources (Block Editor Handbook, Theme Handbook, Plugin Handbook)
 - Gutenberg repo docs for bleeding-edge behaviors
-

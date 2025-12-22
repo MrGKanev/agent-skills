@@ -36,6 +36,10 @@ Decide:
 - Is this theme-level interactivity?
 - Is this plugin-side “enhance existing markup” usage?
 
+If you’re creating a new interactive block (not just debugging), prefer the official scaffold template:
+
+- `@wordpress/create-block-interactive-template` (via `@wordpress/create-block`)
+
 ### 2) Identify the store(s)
 
 Locate store definitions and confirm:
@@ -93,4 +97,3 @@ See `references/debugging.md`.
 - Consult:
   - `references/directives-quickref.md`
   - `references/debugging.md`
-

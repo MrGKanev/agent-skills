@@ -8,6 +8,16 @@ Use this file when you’re editing `block.json` fields or choosing between scri
 - Prefer adding new functionality without changing saved markup; if markup must change, add a `deprecated` version.
 - Keep assets scoped: editor assets should not ship to frontend unless needed.
 
+## API version + schema
+
+- Prefer the latest supported Block API version for new blocks (`apiVersion`).
+- Add a `$schema` to improve editor tooling and validation.
+
+References:
+
+- Block metadata: https://developer.wordpress.org/block-editor/reference-guides/block-api/block-metadata/
+- Block schema index: https://schemas.wp.org/
+
 ## Modern asset fields to know
 
 This is not a full schema; it’s a “what matters in practice” list:

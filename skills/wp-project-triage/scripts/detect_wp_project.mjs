@@ -355,8 +355,16 @@ function main() {
     maxDepth: 8,
   });
 
+  const innerBlocksScan = scanForTokens(repoRoot, {
+    tokens: ["InnerBlocks", "useInnerBlocksProps", "InnerBlocks.Content"],
+    exts: [".js", ".ts", ".tsx"],
+    maxFiles: 2500,
+    maxDepth: 8,
+  });
+
   const usesInteractivityApi = pkgHasInteractivity || Object.keys(interactivityScan.matches).length > 0;
   const usesAbilitiesApi = pkgHasAbilities || Object.keys(abilitiesScan.matches).length > 0;
+  const usesInnerBlocks = Object.keys(innerBlocksScan.matches).length > 0;
 
   const phpunitXml = [];
   for (const candidate of ["phpunit.xml", "phpunit.xml.dist"]) {
@@ -405,6 +413,7 @@ function main() {
     isBlockTheme,
     usesInteractivityApi,
     usesAbilitiesApi,
+    usesInnerBlocks,
     interactivityHints: {
       packageJson: pkgHasInteractivity,
       matches: interactivityScan.matches,
@@ -414,6 +423,10 @@ function main() {
       packageJson: pkgHasAbilities,
       matches: abilitiesScan.matches,
       scanTruncated: abilitiesScan.truncated,
+    },
+    innerBlocksHints: {
+      matches: innerBlocksScan.matches,
+      scanTruncated: innerBlocksScan.truncated,
     },
     blockJsonFiles: blockJsonFiles.map((p) => path.relative(repoRoot, p)).slice(0, 50),
     themeJsonFiles: themeJsonFiles.map((p) => path.relative(repoRoot, p)).slice(0, 50),

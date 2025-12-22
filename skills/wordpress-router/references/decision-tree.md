@@ -26,9 +26,11 @@ Route by intent even if repo kind is broad (like `wp-site`):
 - **Abilities API / wp_register_ability / wp-abilities/v1 / @wordpress/abilities**
   - Route → `wp-abilities-api`.
 - **Blocks / block.json / registerBlockType / attributes / save serialization**
-  - Route → `wp-block-development` (planned).
+  - Route → `wp-block-development`.
 - **theme.json / Global Styles / templates/*.html / patterns/**
-  - Route → `wp-block-themes` (planned).
+  - Route → `wp-block-themes`.
+- **Plugins / hooks / activation hook / uninstall / Settings API / admin pages**
+  - Route → `wp-plugin-development`.
 - **REST endpoint / register_rest_route / permission_callback**
   - Route → `wp-rest-api` (planned).
 - **WP-CLI / wp-cli.yml / commands**

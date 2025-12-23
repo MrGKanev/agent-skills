@@ -104,6 +104,17 @@ function main() {
       fm.description.length <= 1024,
       `Description too long in ${path.relative(repoRoot, skillPath)} (${fm.description.length} chars)`
     );
+
+    const compatibility = fm._raw.compatibility;
+    assert(compatibility, `Missing frontmatter 'compatibility' in: ${path.relative(repoRoot, skillPath)}`);
+    assert(
+      compatibility.length <= 500,
+      `Compatibility too long in ${path.relative(repoRoot, skillPath)} (${compatibility.length} chars)`
+    );
+    assert(
+      compatibility.includes("WordPress 6.9") && compatibility.includes("PHP 7.2.24"),
+      `Compatibility contract mismatch in ${path.relative(repoRoot, skillPath)} (expected WP 6.9 + PHP 7.2.24+)`
+    );
   }
 
   const triageScript = path.join(repoRoot, "skills", "wp-project-triage", "scripts", "detect_wp_project.mjs");

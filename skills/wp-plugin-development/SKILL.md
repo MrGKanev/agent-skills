@@ -1,6 +1,7 @@
 ---
 name: wp-plugin-development
 description: Use when developing WordPress plugins: architecture and hooks, activation/deactivation/uninstall, admin UI and Settings API, data storage, cron/tasks, security (nonces/capabilities/sanitization/escaping), and release packaging.
+compatibility: Targets WordPress 6.9+ (PHP 7.2.24+). Filesystem-based agent with bash + node. Some workflows require WP-CLI.
 ---
 
 # WP Plugin Development
@@ -109,4 +110,3 @@ See:
 ## Escalation
 
 For canonical detail, consult the Plugin Handbook and security guidelines before inventing patterns.
-

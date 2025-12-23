@@ -8,6 +8,7 @@ This repo is built for **AI-assisted authoring** with **deterministic guardrails
 - Prefer deterministic scripts for anything the agent would otherwise “guess” (repo detection, version checks, lint/test command discovery).
 - Don’t add a new skill without at least one scenario in `eval/scenarios/`.
 - Keep file references 1 hop from `SKILL.md` (avoid deep chains).
+- Include a `compatibility:` frontmatter line matching `docs/compatibility-policy.md`.
 
 ## Workflow: draft → harden → ship
 

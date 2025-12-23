@@ -17,3 +17,8 @@ Quick check:
 
 - `node skills/wp-project-triage/scripts/detect_wp_project.mjs`
 - `node eval/harness/run.mjs`
+
+Packaging:
+
+- `node shared/scripts/skillpack-build.mjs --clean`
+- `node shared/scripts/skillpack-install.mjs --dest=../some-repo --targets=codex,vscode`

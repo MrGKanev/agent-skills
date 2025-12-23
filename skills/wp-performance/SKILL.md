@@ -1,6 +1,7 @@
 ---
 name: wp-performance
 description: Use when investigating or improving WordPress performance (backend-only agent): profiling and measurement (WP-CLI profile/doctor, Server-Timing, Query Monitor via REST headers), database/query optimization, autoloaded options, object caching, cron, HTTP API calls, and safe verification.
+compatibility: Targets WordPress 6.9+ (PHP 7.2.24+). Backend-only agent; prefers WP-CLI (doctor/profile) when available.
 ---
 
 # WP Performance (backend-only)
@@ -124,4 +125,3 @@ Use the profile output to pick *one* primary bottleneck category:
 - If this is production and you don’t have explicit approval, do not:
   - install plugins, enable `SAVEQUERIES`, run load tests, or flush caches during traffic
 - If you need system-level profiling (APM, PHP profiler extensions), coordinate with ops/hosting.
-

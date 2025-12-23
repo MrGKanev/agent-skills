@@ -4,7 +4,7 @@
 
 ### Install / run server
 
-- `npx @wp-playground/cli@latest server [--port=9400] [--auto-mount] [--wp=<ver>] [--php=<ver>] [--verbosity=debug]`
+- `npx @wp-playground/cli@latest server [--port=9400] [--auto-mount] [--wp=<ver>] [--php=<ver>] [--verbosity=debug] [--blueprint=<url-or-path>]`
 - Mounts:
   - `--auto-mount` (detect plugin/theme in CWD)
   - `--mount=/abs/host:/vfs/path` (repeatable)
@@ -29,4 +29,3 @@
 
 - `--wp=<version>` to pick WordPress version (defaults to latest).
 - `--php=<version>` to pick PHP version (defaults typically 8.3).
-

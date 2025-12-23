@@ -74,6 +74,13 @@ npx @wp-playground/cli@latest build-snapshot --blueprint=<file> --outfile=./site
 - Use `--wp=` to pin WP (e.g., 6.9.0) and `--php=` to test compatibility.
 - If feature depends on Gutenberg trunk, prefer the latest WP release plus plugin if available; Playground images track stable WP plus bundled Gutenberg.
 
+### 7) Browser-only workflows (no CLI)
+
+- Launch quick previews with URL fragments or query params:
+  - Fragment: `https://playground.wordpress.net/#<base64-or-json-blueprint>`
+  - Query: `https://playground.wordpress.net/?blueprint-url=<public-url-or-zip>`
+- Use the live Blueprint Editor (playground.wordpress.net) to author blueprints with schema help; paste JSON and copy a shareable link.
+
 ## Verification
 
 - Verify mounted code is active (plugin listed/active; theme selected).
@@ -92,4 +99,3 @@ npx @wp-playground/cli@latest build-snapshot --blueprint=<file> --outfile=./site
 
 - If PHP extensions or native DB access are required, Playground may be unsuitable; fall back to full WP stack or wp-env/Docker.
 - For browser-only embedding or VS Code extension specifics, consult the upstream docs: https://wordpress.github.io/wordpress-playground/
-

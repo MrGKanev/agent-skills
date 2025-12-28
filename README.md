@@ -1,5 +1,8 @@
 # agent-skills
+
 Agent Skills - folders of instructions, scripts, and resources - for WordPress
+
+<img width="2400" height="1260" alt="image" src="https://github.com/user-attachments/assets/def9a6f9-cbba-4249-866f-b9a274b84188" />
 
 Current skills:
 
@@ -12,6 +15,7 @@ Current skills:
 - `skills/wp-abilities-api/SKILL.md`
 - `skills/wp-wpcli-and-ops/SKILL.md`
 - `skills/wp-performance/SKILL.md`
+- `skills/wp-playground/SKILL.md`
 
 Quick check:
 

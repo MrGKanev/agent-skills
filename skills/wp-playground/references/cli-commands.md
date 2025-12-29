@@ -1,6 +1,14 @@
 ## Playground CLI command cheatsheet
 
 > Requires Node.js 20.18+ and npm/npx.
+> Latest version: 3.0.20 (November 2025)
+
+### What's new in 2025
+
+- **PHP 8.3 is now the default** (since July 2025).
+- **New PHP extensions**: ImageMagick, SOAP, and AVIF GD support.
+- **OpCache enabled**: 42% faster response times (185ms → 108ms average).
+- **Multi-worker default**: `--experimental-multi-worker` now defaults to CPU count minus one.
 
 ### Install / run server
 
@@ -28,4 +36,4 @@
 ### Version control
 
 - `--wp=<version>` to pick WordPress version (defaults to latest).
-- `--php=<version>` to pick PHP version (defaults typically 8.3).
+- `--php=<version>` to pick PHP version (defaults to 8.3 since July 2025).

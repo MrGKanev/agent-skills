@@ -50,15 +50,31 @@ After scaffolding:
 1. Re-run the block list script and confirm the new block root.
 2. Continue with the remaining steps (model choice, metadata, registration, serialization).
 
-### 2) Pick the right block model
+### 2) Ensure apiVersion 3 (WordPress 6.9+)
+
+WordPress 6.9 enforces `apiVersion: 3` in the block.json schema. Blocks with apiVersion 2 or lower trigger console warnings when `SCRIPT_DEBUG` is enabled.
+
+**Why this matters:**
+- WordPress 7.0 will run the post editor in an iframe regardless of block apiVersion.
+- apiVersion 3 ensures your block works correctly inside the iframed editor (style isolation, viewport units, media queries).
+
+**Migration:** Changing from version 2 to 3 is usually as simple as updating the `apiVersion` field in `block.json`. However:
+- Test in a local environment with the iframe editor enabled.
+- Ensure any style handles are included in `block.json` (styles missing from the iframe won't apply).
+- Third-party scripts attached to a specific `window` may have scoping issues.
+
+Read:
+- `references/block-json.md` (apiVersion and schema details)
+
+### 3) Pick the right block model
 
 - **Static block** (markup saved into post content): implement `save()`; keep attributes serialization stable.
 - **Dynamic block** (server-rendered): use `render` in `block.json` (or `render_callback` in PHP) and keep `save()` minimal or `null`.
 - **Interactive frontend behavior**:
   - Prefer `viewScriptModule` for modern module-based view scripts where supported.
-  - If you’re working primarily on `data-wp-*` directives or stores, also use `wp-interactivity-api`.
+  - If you're working primarily on `data-wp-*` directives or stores, also use `wp-interactivity-api`.
 
-### 3) Update `block.json` safely
+### 4) Update `block.json` safely
 
 Make changes in the block’s `block.json`, then confirm registration matches metadata.
 
@@ -71,7 +87,7 @@ Common pitfalls:
 - changing saved markup without adding `deprecated` causes “Invalid block”
 - adding attributes without defining source/serialization correctly causes “attribute not saving”
 
-### 4) Register the block (server-side preferred)
+### 5) Register the block (server-side preferred)
 
 Prefer PHP registration using metadata, especially when:
 
@@ -82,7 +98,7 @@ Prefer PHP registration using metadata, especially when:
 Read and apply:
 - `references/registration.md`
 
-### 5) Implement edit/save/render patterns
+### 6) Implement edit/save/render patterns
 
 Follow wrapper attribute best practices:
 
@@ -94,7 +110,7 @@ Read:
 - `references/supports-and-wrappers.md`
 - `references/dynamic-rendering.md` (if dynamic)
 
-### 6) Inner blocks (block composition)
+### 7) Inner blocks (block composition)
 
 If your block is a “container” that nests other blocks, treat Inner Blocks as a first-class feature:
 
@@ -104,7 +120,7 @@ If your block is a “container” that nests other blocks, treat Inner Blocks a
 Read:
 - `references/inner-blocks.md`
 
-### 7) Attributes and serialization
+### 8) Attributes and serialization
 
 Before changing attributes:
 
@@ -114,7 +130,7 @@ Before changing attributes:
 Read:
 - `references/attributes-and-serialization.md`
 
-### 8) Migrations and deprecations (avoid “Invalid block”)
+### 9) Migrations and deprecations (avoid "Invalid block")
 
 If you change saved markup or attributes:
 
@@ -124,7 +140,7 @@ If you change saved markup or attributes:
 Read:
 - `references/deprecations.md`
 
-### 9) Tooling and verification commands
+### 10) Tooling and verification commands
 
 Prefer whatever the repo already uses:
 

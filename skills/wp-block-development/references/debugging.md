@@ -18,3 +18,19 @@
 - If the value is in delimiter JSON, avoid brittle selectors.
 - Avoid `meta` attribute source (deprecated).
 
+## Console warnings about apiVersion (WordPress 6.9+)
+
+If you see "The block 'namespace/block' is registered with API version 2 or lower":
+
+- Update `apiVersion` to `3` in block.json.
+- This warning only appears when `SCRIPT_DEBUG` is true.
+- WordPress 7.0 will require apiVersion 3 for proper iframe editor support.
+
+## Styles not applying in editor (apiVersion 3 / iframe)
+
+If styles work on frontend but not in the editor:
+
+- Ensure style handles are declared in block.json (`editorStyle`, `style`).
+- Styles not included in block.json won't load inside the iframed editor.
+- Check for Dashicons or other dependencies that need explicit inclusion.
+

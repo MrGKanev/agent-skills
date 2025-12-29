@@ -57,6 +57,12 @@ When touching markup directives:
 - prefer stable data attributes that map clearly to store state,
 - ensure server-rendered markup + client hydration align.
 
+**WordPress 6.9 changes:**
+
+- **`data-wp-ignore` is deprecated** and will be removed in future versions. It broke context inheritance and caused issues with client-side navigation. Avoid using it.
+- **Unique directive IDs**: Multiple directives of the same type can now exist on one element using the `---` separator (e.g., `data-wp-on--click---plugin-a="..."` and `data-wp-on--click---plugin-b="..."`).
+- **New TypeScript types**: `AsyncAction<ReturnType>` and `TypeYield<T>` help with async action typing.
+
 For quick directive reminders, see `references/directives-quickref.md`.
 
 ### 4) Build/tooling alignment
@@ -91,6 +97,9 @@ See `references/debugging.md`.
   - server markup differs from client expectations; simplify or align initial state.
 - Performance regressions:
   - overly broad interactive roots; scope interactivity to smaller subtrees.
+- Client-side navigation issues (WordPress 6.9):
+  - `getServerState()` and `getServerContext()` now reset between page transitions—ensure your code doesn't assume stale values persist.
+  - Router regions now support `attachTo` for rendering overlays (modals, pop-ups) dynamically.
 
 ## Escalation
 

@@ -1,28 +1,111 @@
-# agent-skills
+# Agent Skills for WordPress
 
-Agent Skills - folders of instructions, scripts, and resources - for WordPress
+**Teach AI coding assistants how to build WordPress the right way.**
 
-<img width="2400" height="1260" alt="image" src="https://github.com/user-attachments/assets/def9a6f9-cbba-4249-866f-b9a274b84188" />
+Agent Skills are portable bundles of instructions, checklists, and scripts that help AI assistants (Claude, Copilot, Codex, Cursor, etc.) understand WordPress development patterns, avoid common mistakes, and follow best practices.
 
-Current skills:
+<img width="2400" height="1260" alt="Agent Skills banner" src="https://github.com/user-attachments/assets/def9a6f9-cbba-4249-866f-b9a274b84188" />
 
-- `skills/wordpress-router/SKILL.md`
-- `skills/wp-project-triage/SKILL.md`
-- `skills/wp-block-development/SKILL.md`
-- `skills/wp-block-themes/SKILL.md`
-- `skills/wp-plugin-development/SKILL.md`
-- `skills/wp-interactivity-api/SKILL.md`
-- `skills/wp-abilities-api/SKILL.md`
-- `skills/wp-wpcli-and-ops/SKILL.md`
-- `skills/wp-performance/SKILL.md`
-- `skills/wp-playground/SKILL.md`
+## Why Agent Skills?
 
-Quick check:
+AI coding assistants are powerful, but they often:
+- Generate outdated WordPress patterns (pre-Gutenberg, pre-block themes)
+- Miss critical security considerations in plugin development
+- Skip proper block deprecations, causing "Invalid block" errors
+- Ignore existing tooling in your repo
 
-- `node skills/wp-project-triage/scripts/detect_wp_project.mjs`
-- `node eval/harness/run.mjs`
+Agent Skills solve this by giving AI assistants **expert-level WordPress knowledge** in a format they can actually use.
 
-Packaging:
+## Available Skills
 
-- `node shared/scripts/skillpack-build.mjs --clean`
-- `node shared/scripts/skillpack-install.mjs --dest=../some-repo --targets=codex,vscode`
+| Skill | What it teaches |
+|-------|-----------------|
+| **wordpress-router** | Classifies WordPress repos and routes to the right workflow |
+| **wp-project-triage** | Detects project type, tooling, and versions automatically |
+| **wp-block-development** | Gutenberg blocks: `block.json`, attributes, rendering, deprecations |
+| **wp-block-themes** | Block themes: `theme.json`, templates, patterns, style variations |
+| **wp-plugin-development** | Plugin architecture, hooks, settings API, security |
+| **wp-interactivity-api** | Frontend interactivity with `data-wp-*` directives and stores |
+| **wp-abilities-api** | Capability-based permissions and REST API authentication |
+| **wp-wpcli-and-ops** | WP-CLI commands, automation, multisite, search-replace |
+| **wp-performance** | Profiling, caching, database optimization, Server-Timing |
+| **wp-playground** | WordPress Playground for instant local environments |
+
+## Quick Start
+
+### Install into your repo
+
+```bash
+# Clone agent-skills
+git clone https://github.com/Automattic/agent-skills.git
+cd agent-skills
+
+# Build the distribution
+node shared/scripts/skillpack-build.mjs --clean
+
+# Install into your WordPress project
+node shared/scripts/skillpack-install.mjs --dest=../your-wp-project --targets=codex,vscode
+```
+
+This copies skills into:
+- `.codex/skills/` for OpenAI Codex
+- `.github/skills/` for VS Code / GitHub Copilot
+
+### Manual installation
+
+Copy any skill folder from `skills/` into your project's instructions directory for your AI assistant.
+
+## How It Works
+
+Each skill contains:
+
+```
+skills/wp-block-development/
+├── SKILL.md              # Main instructions (when to use, procedure, verification)
+├── references/           # Deep-dive docs on specific topics
+│   ├── block-json.md
+│   ├── deprecations.md
+│   └── ...
+└── scripts/              # Deterministic helpers (detection, validation)
+    └── list_blocks.mjs
+```
+
+When you ask your AI assistant to work on WordPress code, it reads these skills and follows the documented procedures rather than guessing.
+
+## Compatibility
+
+- **WordPress 6.9+** (PHP 7.2.24+)
+- Works with any AI assistant that supports project-level instructions
+
+## Contributing
+
+See the [Authoring Guide](docs/authoring-guide.md) for details on creating or improving skills.
+
+Key principles:
+- Keep `SKILL.md` short and procedural
+- Move depth into `references/`
+- Add scripts for anything deterministic (don't make the AI guess)
+- Include eval scenarios for testing
+
+### Scaffold a new skill
+
+```bash
+node shared/scripts/scaffold-skill.mjs <skill-name> "<description>"
+```
+
+### Validate skills
+
+```bash
+node eval/harness/run.mjs
+```
+
+## Documentation
+
+- [Authoring Guide](docs/authoring-guide.md) - How to create and improve skills
+- [Principles](docs/principles.md) - Design philosophy
+- [Packaging](docs/packaging.md) - Build and distribution
+- [Compatibility Policy](docs/compatibility-policy.md) - Version targeting
+
+## License
+
+MIT

@@ -104,6 +104,25 @@ Use the profile output to pick *one* primary bottleneck category:
 - Confirm the performance delta and that behavior is unchanged.
 - If the fix is risky, ship behind a feature flag or staged rollout when possible.
 
+## WordPress 6.9 performance improvements
+
+Be aware of these 6.9 changes when profiling:
+
+**On-demand CSS for classic themes:**
+- Classic themes now get on-demand CSS loading (previously only block themes had this).
+- Reduces CSS payload by 30-65% by only loading styles for blocks actually used on the page.
+- If you're profiling a classic theme, this should already be helping.
+
+**Block themes with no render-blocking resources:**
+- Block themes that don't define custom stylesheets (like Twenty Twenty-Three/Four) can now load with zero render-blocking CSS.
+- Styles come from global styles (theme.json) and separate block styles, all inlined.
+- This significantly improves LCP (Largest Contentful Paint).
+
+**Inline CSS limit increased:**
+- The threshold for inlining small stylesheets has been raised, reducing render-blocking resources.
+
+Reference: https://make.wordpress.org/core/2025/11/18/wordpress-6-9-frontend-performance-field-guide/
+
 ## Verification
 
 - Baseline vs after numbers are captured (same environment, same URL/route).

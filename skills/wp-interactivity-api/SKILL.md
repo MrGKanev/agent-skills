@@ -69,7 +69,7 @@ For components using `block.json`, add `supports.interactivity`:
 }
 ```
 
-For themes/plugins without `block.json`, use `wp_interactivity_process_directives()` to manually process directives (see `references/server-side-rendering.md`).
+For themes/plugins without `block.json`, use `wp_interactivity_process_directives()` to process directives.
 
 #### Initialize state/context in PHP
 
@@ -109,7 +109,7 @@ wp_interactivity_state( 'myPlugin', array(
 
 This ensures directives like `data-wp-bind--hidden="!state.hasItems"` render correctly on first load.
 
-For detailed examples and patterns, see `references/server-directives.md`.
+For detailed examples and patterns, see `references/server-side-rendering.md`.
 
 ### 4) Implement or change directives safely
 

@@ -52,21 +52,6 @@ function isFile(filePath) {
 }
 
 /**
- * Checks whether a Composer package name looks like a stub bundle.
- *
- * PHP projects use a variety of naming conventions for stub packages. This
- * helper keeps detection generic by treating any dependency containing "stubs"
- * as a candidate.
- *
- * @param {string} packageName Composer package name.
- * @returns {boolean} True when the package name includes "stubs".
- */
-function isStubPackageName(packageName) {
-  if (typeof packageName !== "string") return false;
-  return packageName.toLowerCase().includes("stubs");
-}
-
-/**
  * Normalizes Composer script entries into a flat list of commands.
  *
  * Composer allows scripts to be strings or arrays. This helper provides a
@@ -220,39 +205,11 @@ function buildReport() {
   const composerScripts = composer?.scripts && typeof composer.scripts === "object" ? composer.scripts : null;
   const phpstanScripts = composerScripts ? findPhpstanScripts(composerScripts) : [];
 
-  const composerDependencies = new Set();
-
-  /**
-   * Collects Composer dependency names that look PHPStan-related.
-   *
-   * Matches packages containing "phpstan", "wordpress", or "stubs" in their
-   * name. The LLM determines relevance and completeness.
-   *
-   * @param {Record<string, unknown>} depsBlock Composer require/require-dev block.
-   */
-  function collectDeps(depsBlock) {
-    if (!depsBlock || typeof depsBlock !== "object") return;
-
-    for (const name of Object.keys(depsBlock)) {
-      const isRelevant =
-        name.includes("phpstan") || name.includes("wordpress") || isStubPackageName(name);
-
-      if (isRelevant) {
-        composerDependencies.add(name);
-      }
-    }
-  }
-
-  if (composer?.require && typeof composer.require === "object") {
-    collectDeps(composer.require);
-  }
-
-  if (composer?.["require-dev"] && typeof composer["require-dev"] === "object") {
-    collectDeps(composer["require-dev"]);
-  }
-
-  const detectedDependencies = [...composerDependencies].sort();
-  const referencedPackages = configText ? extractStubPackageReferences(configText) : [];
+  const composerDependencies = [
+    ...Object.keys(composer?.require ?? {}),
+    ...Object.keys(composer?.["require-dev"] ?? {}),
+  ].sort();
+  const referencedDependencies = configText ? extractStubPackageReferences(configText) : [];
 
   const configHints = configText ? buildConfigHints(configText) : null;
 
@@ -276,7 +233,7 @@ function buildReport() {
       exists: Boolean(composer),
       path: isFile(composerPath) ? "composer.json" : null,
       phpstanScripts,
-      dependencies: detectedDependencies,
+      dependencies: composerDependencies,
     },
     phpstan: {
       configFiles: phpstanConfigFiles,
@@ -284,7 +241,7 @@ function buildReport() {
       config: {
         primary: configRelPath,
         hints: configHints,
-        referencedPackages,
+        referencedDependencies,
       },
       binary: {
         vendorBin: binaryRelPath,

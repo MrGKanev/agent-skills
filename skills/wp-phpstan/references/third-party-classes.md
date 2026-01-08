@@ -15,7 +15,7 @@ Stubs are useful when the analysis environment does not include WordPress (or a 
 Common packages:
 
 ```bash
-composer require --dev php-stubs/wordpress-stubs
+composer require --dev szepeviktor/phpstan-wordpress
 composer require --dev php-stubs/woocommerce-stubs
 composer require --dev php-stubs/acf-pro-stubs
 ```
@@ -34,14 +34,15 @@ Notes:
 
 ## Ensure stubs are loaded
 
-Installing stubs is not enough if PHPStan does not scan them. Add stub paths to `scanDirectories` (or `scanFiles`) in `phpstan.neon`.
+Installing stubs is not enough if PHPStan does not scan them. Add stub paths in `phpstan.neon`.
 
 ```neon
 parameters:
-    scanDirectories:
-        - vendor/php-stubs/wordpress-stubs
-        - vendor/php-stubs/woocommerce-stubs
-        - vendor/php-stubs/acf-pro-stubs
+    bootstrapFiles:
+        - - %rootDir%/../../php-stubs/woocommerce-stubs/woocommerce-stubs.php
+    scanFiles:
+        - %rootDir%/../../php-stubs/acf-pro-stubs/acf-pro-stubs.php
+        - %rootDir%/../../woocommerce/action-scheduler/functions.php
 ```
 
 ## Targeted ignore patterns (examples)

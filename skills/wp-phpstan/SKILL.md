@@ -1,7 +1,7 @@
 ---
 name: wp-phpstan
 description: "Use when configuring, running, or fixing PHPStan static analysis in WordPress projects (plugins/themes/sites): phpstan.neon setup, baselines, WordPress-specific typing, and handling third-party plugin classes."
-compatibility: "Targets WordPress 6.9+ (PHP 7.2.24+). Requires Composer-based PHPStan. For most plugin/theme repos, php-stubs/wordpress-stubs is required."
+compatibility: "Targets WordPress 6.9+ (PHP 7.2.24+). Requires Composer-based PHPStan."
 ---
 
 # WP PHPStan
@@ -17,24 +17,21 @@ Use this skill when working on PHPStan in a WordPress codebase, for example:
 
 ## Inputs required
 
-- Repo root and what code is in scope (plugin/theme/site paths).
+- `wp-project-triage` output (run first if you havent)
 - Whether adding/updating Composer dev dependencies is allowed (stubs).
 - Whether changing the baseline is allowed for this task.
 
 ## Procedure
 
-### 0) Triage and discover PHPStan entrypoints (deterministic)
-
-1. Run project triage:
-   - `node skills/wp-project-triage/scripts/detect_wp_project.mjs`
-2. Inspect PHPStan setup (config, baseline, scripts):
+### 0) Discover PHPStan entrypoints (deterministic)
+1. Inspect PHPStan setup (config, baseline, scripts):
    - `node skills/wp-phpstan/scripts/phpstan_inspect.mjs`
 
 Prefer the repo’s existing `composer` script (e.g. `composer run phpstan`) when present.
 
 ### 1) Ensure WordPress core stubs are loaded
 
-`php-stubs/wordpress-stubs` is effectively required for most WordPress plugin/theme repos. Without it, expect a high volume of errors about unknown WordPress core functions.
+`szepeviktor/phpstan-wordpress` is effectively required for most WordPress plugin/theme repos. Without it, expect a high volume of errors about unknown WordPress core functions.
 
 - Confirm the package is installed (see `composer.dependencies.stubs` in the inspect report).
 - Ensure the PHPStan config references the stubs (see `references/third-party-classes.md`).

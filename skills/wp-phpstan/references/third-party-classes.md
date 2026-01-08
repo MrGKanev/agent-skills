@@ -16,6 +16,7 @@ Common packages:
 
 ```bash
 composer require --dev szepeviktor/phpstan-wordpress
+composer require --dev php-stubs/wordpress-stubs
 composer require --dev php-stubs/woocommerce-stubs
 composer require --dev php-stubs/acf-pro-stubs
 ```
@@ -39,8 +40,9 @@ Installing stubs is not enough if PHPStan does not scan them. Add stub paths in 
 ```neon
 parameters:
     bootstrapFiles:
-        - - %rootDir%/../../php-stubs/woocommerce-stubs/woocommerce-stubs.php
+        - %rootDir%/../../php-stubs/woocommerce-stubs/woocommerce-stubs.php
     scanFiles:
+        - %rootDir%/../../php-stubs/wordpress-stubs/wordpress-stubs.php
         - %rootDir%/../../php-stubs/acf-pro-stubs/acf-pro-stubs.php
         - %rootDir%/../../woocommerce/action-scheduler/functions.php
 ```

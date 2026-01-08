@@ -52,6 +52,21 @@ function isFile(filePath) {
 }
 
 /**
+ * Checks whether a Composer package name looks like a stub bundle.
+ *
+ * PHP projects use a variety of naming conventions for stub packages. This
+ * helper keeps detection generic by treating any dependency containing "stubs"
+ * as a candidate.
+ *
+ * @param {string} packageName Composer package name.
+ * @returns {boolean} True when the package name includes "stubs".
+ */
+function isStubPackageName(packageName) {
+  if (typeof packageName !== "string") return false;
+  return packageName.toLowerCase().includes("stubs");
+}
+
+/**
  * Normalizes Composer script entries into a flat list of commands.
  *
  * Composer allows scripts to be strings or arrays. This helper provides a
@@ -141,21 +156,62 @@ function suggestCommand(phpstanScripts, fallbackInfo) {
  * Extracts string-based hints from a phpstan.neon config.
  *
  * This does not parse NEON. It only checks for common tokens so the agent can
- * avoid guessing whether stub paths are referenced.
+ * avoid guessing whether stub packages are referenced.
  *
  * @param {string} configText Raw phpstan config contents.
- * @returns {{mentionsScanDirectories: boolean, mentionsScanFiles: boolean, mentionsWordpressStubs: boolean, mentionsWoocommerceStubs: boolean, mentionsAcfProStubs: boolean}} Hints.
+ * @param {string[]} stubPackageNames Stub packages declared in composer.json.
+ * @returns {{mentionsScanDirectories: boolean, mentionsScanFiles: boolean, stubPackages: Array<{name: string, mentioned: boolean, matchedToken: string|null}>}} Hints.
  */
-function buildConfigHints(configText) {
+function buildConfigHints(configText, stubPackageNames) {
   const t = configText.toLowerCase();
+
+  const stubPackages = Array.isArray(stubPackageNames)
+    ? stubPackageNames
+      .filter((name) => typeof name === "string" && name.length > 0)
+      .map((name) => {
+        const normalized = name.toLowerCase();
+        const baseName = normalized.split("/").pop() ?? normalized;
+
+        const tokens = [`vendor/${normalized}`, normalized];
+
+        if (baseName && baseName !== "stubs") tokens.push(baseName);
+
+        const matchedToken = tokens.find((token) => t.includes(token)) ?? null;
+
+        return {
+          name,
+          mentioned: Boolean(matchedToken),
+          matchedToken,
+        };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name))
+    : [];
 
   return {
     mentionsScanDirectories: t.includes("scandirectories"),
     mentionsScanFiles: t.includes("scanfiles"),
-    mentionsWordpressStubs: t.includes("wordpress-stubs"),
-    mentionsWoocommerceStubs: t.includes("woocommerce-stubs"),
-    mentionsAcfProStubs: t.includes("acf-pro-stubs"),
+    stubPackages,
   };
+}
+
+/**
+ * Extracts stub-like package references from a PHPStan config.
+ *
+ * The PHPStan config usually references stubs via vendor paths (for example,
+ * "vendor/php-stubs/wordpress-stubs"), so this helper focuses on composer-style
+ * "vendor/package" tokens containing "stubs".
+ *
+ * @param {string} configText Raw phpstan config contents.
+ * @returns {string[]} Unique, lowercased composer-style package references.
+ */
+function extractStubPackageReferences(configText) {
+  const matches = configText
+    .toLowerCase()
+    .match(/\b[a-z0-9_.-]+\/[a-z0-9_.-]*stubs[a-z0-9_.-]*\b/g);
+
+  if (!matches) return [];
+
+  return [...new Set(matches)].sort();
 }
 
 /**
@@ -182,7 +238,6 @@ function buildReport() {
 
   const configAbsPath = configRelPath ? path.join(repoRoot, configRelPath) : null;
   const configText = configAbsPath ? readTextSafe(configAbsPath) : null;
-  const configHints = configText ? buildConfigHints(configText) : null;
 
   const binaryRelPath = isFile(path.join(repoRoot, "vendor", "bin", "phpstan")) ? "vendor/bin/phpstan" : null;
 
@@ -195,6 +250,8 @@ function buildReport() {
     stubs: [],
   };
 
+  const stubPackageMeta = new Map();
+
   /**
    * Collects dependency names that match certain heuristics.
    *
@@ -202,30 +259,54 @@ function buildReport() {
    * WordPress/PHPStan packages used for typing support.
    *
    * @param {Record<string, unknown>} depsBlock Composer require/require-dev block.
+   * @param {"require"|"require-dev"} scope Dependency block the packages came from.
    */
-  function collectDeps(depsBlock) {
+  function collectDeps(depsBlock, scope) {
     if (!depsBlock || typeof depsBlock !== "object") return;
 
-    const names = Object.keys(depsBlock);
+    for (const [name, constraint] of Object.entries(depsBlock)) {
+      if (name.includes("phpstan")) deps.phpstan.push(name);
+      if (name.includes("wordpress")) deps.wordpress.push(name);
 
-    deps.phpstan.push(...names.filter((k) => k.includes("phpstan")));
-    deps.wordpress.push(...names.filter((k) => k.includes("wordpress")));
+      if (!isStubPackageName(name)) continue;
 
-    deps.stubs.push(
-      ...names.filter((k) => {
-        if (k.startsWith("php-stubs/")) return true;
-        return k.endsWith("-stubs");
-      })
-    );
+      deps.stubs.push(name);
+
+      const versionConstraint = typeof constraint === "string" ? constraint : null;
+      const existing = stubPackageMeta.get(name);
+
+      if (!existing) {
+        stubPackageMeta.set(name, {
+          name,
+          versionConstraint,
+          scopes: new Set([scope]),
+        });
+        continue;
+      }
+
+      existing.scopes.add(scope);
+      if (!existing.versionConstraint && versionConstraint) existing.versionConstraint = versionConstraint;
+    }
   }
 
   if (composer?.require && typeof composer.require === "object") {
-    collectDeps(composer.require);
+    collectDeps(composer.require, "require");
   }
 
   if (composer?.["require-dev"] && typeof composer["require-dev"] === "object") {
-    collectDeps(composer["require-dev"]);
+    collectDeps(composer["require-dev"], "require-dev");
   }
+
+  const stubPackageNames = [...new Set(deps.stubs)].sort();
+  const stubPackages = Array.from(stubPackageMeta.values())
+    .map((pkg) => ({
+      name: pkg.name,
+      versionConstraint: pkg.versionConstraint,
+      scopes: [...pkg.scopes].sort(),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const configHints = configText ? buildConfigHints(configText, stubPackageNames) : null;
 
   const suggested = suggestCommand(phpstanScripts, {
     binaryRelPath,
@@ -238,19 +319,32 @@ function buildReport() {
   if (phpstanConfigFiles.length === 0) notes.push("No phpstan.neon or phpstan.neon.dist found at repo root.");
   if (!binaryRelPath && phpstanScripts.length === 0) notes.push("No PHPStan entrypoint detected (Composer script or vendor/bin/phpstan).");
 
-  const stubSet = new Set(deps.stubs);
-  const hasWordpressStubs = stubSet.has("php-stubs/wordpress-stubs");
+  if (configText) {
+    const referencedStubPackages = extractStubPackageReferences(configText);
+    const installedStubPackages = new Set(stubPackageNames.map((name) => name.toLowerCase()));
+    const missingStubPackages = referencedStubPackages.filter((name) => !installedStubPackages.has(name));
 
-  if (configHints && hasWordpressStubs && !configHints.mentionsWordpressStubs) {
-    notes.push(
-      "php-stubs/wordpress-stubs is installed but the PHPStan config does not mention wordpress-stubs. Ensure stubs are loaded via scanDirectories/scanFiles."
-    );
+    if (missingStubPackages.length > 0) {
+      notes.push(
+        `PHPStan config references stub package(s) not declared in composer.json: ${missingStubPackages.join(
+          ", "
+        )}. Ensure they are installed or update the config paths.`
+      );
+    }
   }
 
-  if (configHints && !hasWordpressStubs && configHints.mentionsWordpressStubs) {
-    notes.push(
-      "PHPStan config mentions wordpress-stubs but the package was not found in Composer dependencies. Ensure php-stubs/wordpress-stubs is installed or paths are correct."
-    );
+  if (configHints) {
+    const unmentionedStubPackages = configHints.stubPackages
+      .filter((pkg) => !pkg.mentioned)
+      .map((pkg) => pkg.name);
+
+    if (unmentionedStubPackages.length > 0) {
+      notes.push(
+        `Stub package(s) are installed but not obviously referenced in the PHPStan config: ${unmentionedStubPackages.join(
+          ", "
+        )}. Ensure stubs are loaded.`
+      );
+    }
   }
 
   return {
@@ -263,7 +357,8 @@ function buildReport() {
       dependencies: {
         phpstan: [...new Set(deps.phpstan)].sort(),
         wordpress: [...new Set(deps.wordpress)].sort(),
-        stubs: [...new Set(deps.stubs)].sort(),
+        stubs: stubPackageNames,
+        stubPackages,
       },
     },
     phpstan: {

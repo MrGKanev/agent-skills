@@ -153,44 +153,20 @@ function suggestCommand(phpstanScripts, fallbackInfo) {
 }
 
 /**
- * Extracts string-based hints from a phpstan.neon config.
+ * Extracts lightweight hints from a phpstan.neon config.
  *
- * This does not parse NEON. It only checks for common tokens so the agent can
- * avoid guessing whether stub packages are referenced.
+ * This does not parse NEON. It only checks for common directive tokens so the
+ * agent can quickly see whether scan directives are in use.
  *
  * @param {string} configText Raw phpstan config contents.
- * @param {string[]} stubPackageNames Stub packages declared in composer.json.
- * @returns {{mentionsScanDirectories: boolean, mentionsScanFiles: boolean, stubPackages: Array<{name: string, mentioned: boolean, matchedToken: string|null}>}} Hints.
+ * @returns {{mentionsScanDirectories: boolean, mentionsScanFiles: boolean}} Hints.
  */
-function buildConfigHints(configText, stubPackageNames) {
+function buildConfigHints(configText) {
   const t = configText.toLowerCase();
-
-  const stubPackages = Array.isArray(stubPackageNames)
-    ? stubPackageNames
-      .filter((name) => typeof name === "string" && name.length > 0)
-      .map((name) => {
-        const normalized = name.toLowerCase();
-        const baseName = normalized.split("/").pop() ?? normalized;
-
-        const tokens = [`vendor/${normalized}`, normalized];
-
-        if (baseName && baseName !== "stubs") tokens.push(baseName);
-
-        const matchedToken = tokens.find((token) => t.includes(token)) ?? null;
-
-        return {
-          name,
-          mentioned: Boolean(matchedToken),
-          matchedToken,
-        };
-      })
-      .sort((a, b) => a.name.localeCompare(b.name))
-    : [];
 
   return {
     mentionsScanDirectories: t.includes("scandirectories"),
     mentionsScanFiles: t.includes("scanfiles"),
-    stubPackages,
   };
 }
 
@@ -244,69 +220,41 @@ function buildReport() {
   const composerScripts = composer?.scripts && typeof composer.scripts === "object" ? composer.scripts : null;
   const phpstanScripts = composerScripts ? findPhpstanScripts(composerScripts) : [];
 
-  const deps = {
-    phpstan: [],
-    wordpress: [],
-    stubs: [],
-  };
-
-  const stubPackageMeta = new Map();
+  const composerDependencies = new Set();
 
   /**
-   * Collects dependency names that match certain heuristics.
+   * Collects Composer dependency names that look PHPStan-related.
    *
-   * This keeps inspection deterministic while still surfacing common
-   * WordPress/PHPStan packages used for typing support.
+   * Matches packages containing "phpstan", "wordpress", or "stubs" in their
+   * name. The LLM determines relevance and completeness.
    *
    * @param {Record<string, unknown>} depsBlock Composer require/require-dev block.
-   * @param {"require"|"require-dev"} scope Dependency block the packages came from.
    */
-  function collectDeps(depsBlock, scope) {
+  function collectDeps(depsBlock) {
     if (!depsBlock || typeof depsBlock !== "object") return;
 
-    for (const [name, constraint] of Object.entries(depsBlock)) {
-      if (name.includes("phpstan")) deps.phpstan.push(name);
-      if (name.includes("wordpress")) deps.wordpress.push(name);
+    for (const name of Object.keys(depsBlock)) {
+      const isRelevant =
+        name.includes("phpstan") || name.includes("wordpress") || isStubPackageName(name);
 
-      if (!isStubPackageName(name)) continue;
-
-      deps.stubs.push(name);
-
-      const versionConstraint = typeof constraint === "string" ? constraint : null;
-      const existing = stubPackageMeta.get(name);
-
-      if (!existing) {
-        stubPackageMeta.set(name, {
-          name,
-          versionConstraint,
-          scopes: new Set([scope]),
-        });
-        continue;
+      if (isRelevant) {
+        composerDependencies.add(name);
       }
-
-      existing.scopes.add(scope);
-      if (!existing.versionConstraint && versionConstraint) existing.versionConstraint = versionConstraint;
     }
   }
 
   if (composer?.require && typeof composer.require === "object") {
-    collectDeps(composer.require, "require");
+    collectDeps(composer.require);
   }
 
   if (composer?.["require-dev"] && typeof composer["require-dev"] === "object") {
-    collectDeps(composer["require-dev"], "require-dev");
+    collectDeps(composer["require-dev"]);
   }
 
-  const stubPackageNames = [...new Set(deps.stubs)].sort();
-  const stubPackages = Array.from(stubPackageMeta.values())
-    .map((pkg) => ({
-      name: pkg.name,
-      versionConstraint: pkg.versionConstraint,
-      scopes: [...pkg.scopes].sort(),
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const detectedDependencies = [...composerDependencies].sort();
+  const referencedPackages = configText ? extractStubPackageReferences(configText) : [];
 
-  const configHints = configText ? buildConfigHints(configText, stubPackageNames) : null;
+  const configHints = configText ? buildConfigHints(configText) : null;
 
   const suggested = suggestCommand(phpstanScripts, {
     binaryRelPath,
@@ -319,33 +267,7 @@ function buildReport() {
   if (phpstanConfigFiles.length === 0) notes.push("No phpstan.neon or phpstan.neon.dist found at repo root.");
   if (!binaryRelPath && phpstanScripts.length === 0) notes.push("No PHPStan entrypoint detected (Composer script or vendor/bin/phpstan).");
 
-  if (configText) {
-    const referencedStubPackages = extractStubPackageReferences(configText);
-    const installedStubPackages = new Set(stubPackageNames.map((name) => name.toLowerCase()));
-    const missingStubPackages = referencedStubPackages.filter((name) => !installedStubPackages.has(name));
 
-    if (missingStubPackages.length > 0) {
-      notes.push(
-        `PHPStan config references stub package(s) not declared in composer.json: ${missingStubPackages.join(
-          ", "
-        )}. Ensure they are installed or update the config paths.`
-      );
-    }
-  }
-
-  if (configHints) {
-    const unmentionedStubPackages = configHints.stubPackages
-      .filter((pkg) => !pkg.mentioned)
-      .map((pkg) => pkg.name);
-
-    if (unmentionedStubPackages.length > 0) {
-      notes.push(
-        `Stub package(s) are installed but not obviously referenced in the PHPStan config: ${unmentionedStubPackages.join(
-          ", "
-        )}. Ensure stubs are loaded.`
-      );
-    }
-  }
 
   return {
     tool: { name: "phpstan_inspect", version: TOOL_VERSION },
@@ -354,12 +276,7 @@ function buildReport() {
       exists: Boolean(composer),
       path: isFile(composerPath) ? "composer.json" : null,
       phpstanScripts,
-      dependencies: {
-        phpstan: [...new Set(deps.phpstan)].sort(),
-        wordpress: [...new Set(deps.wordpress)].sort(),
-        stubs: stubPackageNames,
-        stubPackages,
-      },
+      dependencies: detectedDependencies,
     },
     phpstan: {
       configFiles: phpstanConfigFiles,
@@ -367,6 +284,7 @@ function buildReport() {
       config: {
         primary: configRelPath,
         hints: configHints,
+        referencedPackages,
       },
       binary: {
         vendorBin: binaryRelPath,

@@ -33,7 +33,7 @@ Prefer the repo’s existing `composer` script (e.g. `composer run phpstan`) whe
 
 `szepeviktor/phpstan-wordpress` or `php-stubs/wordpress-stubs` are effectively required for most WordPress plugin/theme repos. Without it, expect a high volume of errors about unknown WordPress core functions.
 
-- Confirm the package is installed (see `composer.dependencies.stubs` in the inspect report).
+- Confirm the package is installed (see `composer.dependencies` in the inspect report).
 - Ensure the PHPStan config references the stubs (see `references/third-party-classes.md`).
 
 ### 2) Ensure a sane `phpstan.neon` for WordPress projects

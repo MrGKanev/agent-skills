@@ -39,11 +39,11 @@ Installing stubs is not enough if PHPStan does not scan them. Add stub paths in 
 
 ```neon
 parameters:
-    stubFiles:
-        - %rootDir%/../../php-stubs/wordpress-stubs/wordpress-stubs.php
+    bootstrapFiles:
         - %rootDir%/../../php-stubs/woocommerce-stubs/woocommerce-stubs.php
-        - %rootDir%/../../php-stubs/acf-pro-stubs/acf-pro-stubs.php
     scanFiles:
+        - %rootDir%/../../php-stubs/wordpress-stubs/wordpress-stubs.php
+        - %rootDir%/../../php-stubs/acf-pro-stubs/acf-pro-stubs.php
         - %rootDir%/../../woocommerce/action-scheduler/functions.php
 ```
 

@@ -41,6 +41,8 @@ Route by intent even if repo kind is broad (like `wp-site`):
   - Route → `wp-build-tooling` (planned).
 - **Testing / PHPUnit / wp-env / Playwright**
   - Route → `wp-testing` (planned).
+- **PHPStan / static analysis / phpstan.neon / phpstan-baseline.neon**
+  - Route → `wp-phpstan`.
 - **Performance / caching / query profiling / editor slowness**
   - Route → `wp-performance`.
 - **Security / nonces / capabilities / sanitization/escaping / uploads**

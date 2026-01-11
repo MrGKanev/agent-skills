@@ -11,6 +11,7 @@ This repo currently includes:
 - `wp-abilities-api`
 - `wp-wpcli-and-ops`
 - `wp-performance`
+- `wp-phpstan`
 
 Planned next skills (not yet implemented):
 

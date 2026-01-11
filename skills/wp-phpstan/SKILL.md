@@ -17,7 +17,7 @@ Use this skill when working on PHPStan in a WordPress codebase, for example:
 
 ## Inputs required
 
-- `wp-project-triage` output (run first if you havent)
+- `wp-project-triage` output (run first if you haven't)
 - Whether adding/updating Composer dev dependencies is allowed (stubs).
 - Whether changing the baseline is allowed for this task.
 

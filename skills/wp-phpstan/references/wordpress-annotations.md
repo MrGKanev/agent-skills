@@ -91,11 +91,10 @@ If a third party returns the wrong type for a filter, a PHPStan error is expecte
 /**
  * Allows hooking into formatting of the price.
  *
- * @param string      $value     The formatted price.
- * @param string|null $formatted The formatted price.
- * @param float       $price     The raw price.
- * @param string      $locale    Locale to localize pricing display.
- * @param string      $currency  Currency symbol.
+ * @param string $formatted The formatted price.
+ * @param float  $price     The raw price.
+ * @param string $locale    Locale to localize pricing display.
+ * @param string $currency  Currency symbol.
  */
 return apply_filters( 'autoscout_vehicle_price_formatted', $formatted, $price, $locale, $currency );
 ```

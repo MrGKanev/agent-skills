@@ -80,23 +80,17 @@ When you ask your AI assistant to work on WordPress code, it reads these skills 
 
 ## Contributing
 
-See the [Authoring Guide](docs/authoring-guide.md) for details on creating or improving skills.
+**We welcome contributions!** This project is a great way to share your WordPress expertise—you don't need to be a coding wizard. Most skills are written in Markdown, focusing on clear procedures and best practices.
 
-Key principles:
-- Keep `SKILL.md` short and procedural
-- Move depth into `references/`
-- Add scripts for anything deterministic (don't make the AI guess)
-- Include eval scenarios for testing
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to get started.
 
-### Scaffold a new skill
+Quick commands:
 
 ```bash
+# Scaffold a new skill
 node shared/scripts/scaffold-skill.mjs <skill-name> "<description>"
-```
 
-### Validate skills
-
-```bash
+# Validate skills
 node eval/harness/run.mjs
 ```
 

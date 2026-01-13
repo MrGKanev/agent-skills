@@ -2,71 +2,82 @@
 
 A curated collection of AI agent skills for efficient development workflows.
 
-## What is this?
+## Installation
 
-This repository aggregates skills from various sources to create a comprehensive toolkit for AI coding assistants (Claude Code, Copilot, Cursor, etc.). Each skill teaches AI assistants specific patterns, best practices, and procedures.
-
-## Structure
-
-```
-agent-skills/
-├── skills/           # Third-party skills (synced from upstream sources)
-├── my-skills/        # Custom skills
-└── skills-manage.sh  # Management script
-```
-
-## Quick Start
+### One-liner (recommended)
 
 ```bash
-# List all available skills
-./skills-manage.sh list
+# For Claude Code (global)
+curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash
 
-# Sync with upstream sources
-./skills-manage.sh sync
+# For GitHub Copilot
+curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash -s -- --target=copilot
 
-# Create a new custom skill
-./skills-manage.sh new <skill-name>
+# For Cursor
+curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash -s -- --target=cursor
 
-# Show info about a skill
-./skills-manage.sh info <skill-name>
+# All targets at once
+curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash -s -- --target=all
 ```
+
+### Install to current project
+
+```bash
+# Install skills to current project (not global)
+curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash -s -- --project
+
+# With specific target
+curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash -s -- --project --target=copilot
+```
+
+### Install specific version
+
+```bash
+# Install a specific release tag
+curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash -s -- --tag=v1.0.0
+```
+
+### List available skills
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash -s -- --list
+```
+
+## Where skills are installed
+
+| Target | Global location | Project location |
+|--------|-----------------|------------------|
+| Claude Code | `~/.claude/skills/` | `.claude/skills/` |
+| GitHub Copilot | `~/.github/skills/` | `.github/skills/` |
+| Cursor | `~/.cursor/skills/` | `.cursor/skills/` |
+
+## Available Skills
+
+### WordPress Development (from Automattic)
+
+| Skill | Description |
+|-------|-------------|
+| `wordpress-router` | Project classification and routing |
+| `wp-project-triage` | Auto-detect project type and versions |
+| `wp-block-development` | Gutenberg blocks, attributes, deprecations |
+| `wp-block-themes` | Block themes, theme.json, patterns |
+| `wp-plugin-development` | Plugin architecture, hooks, security |
+| `wp-interactivity-api` | Frontend interactivity with data-wp-* |
+| `wp-abilities-api` | Capabilities and REST authentication |
+| `wp-wpcli-and-ops` | WP-CLI commands and automation |
+| `wp-performance` | Profiling, caching, optimization |
+| `wp-phpstan` | PHPStan static analysis |
+| `wp-playground` | WordPress Playground environments |
 
 ## Sources & Attribution
 
-This collection includes skills from the following sources. All original authors retain their rights.
+All original authors retain their rights. See [CREDITS.md](CREDITS.md) for details.
 
-| Source | Skills | License | Link |
-|--------|--------|---------|------|
-| **Automattic** | WordPress development skills (blocks, themes, plugins, WP-CLI, etc.) | MIT | [agent-skills](https://github.com/Automattic/agent-skills) |
-
-### Automattic Skills (MIT License)
-
-The following WordPress-focused skills are from Automattic's agent-skills repository:
-
-- `wordpress-router` - Classifies WordPress repos and routes to the right workflow
-- `wp-project-triage` - Detects project type, tooling, and versions
-- `wp-block-development` - Gutenberg blocks, attributes, rendering, deprecations
-- `wp-block-themes` - Block themes, theme.json, templates, patterns
-- `wp-plugin-development` - Plugin architecture, hooks, settings API, security
-- `wp-interactivity-api` - Frontend interactivity with data-wp-* directives
-- `wp-abilities-api` - Capability-based permissions and REST API auth
-- `wp-wpcli-and-ops` - WP-CLI commands, automation, multisite
-- `wp-performance` - Profiling, caching, optimization
-- `wp-phpstan` - PHPStan static analysis for WordPress
-- `wp-playground` - WordPress Playground for local environments
-
-## Adding New Sources
-
-To add skills from another repository:
-
-1. Add it as a git remote: `git remote add <name> <url>`
-2. Fetch and merge: `git fetch <name> && git merge <name>/<branch>`
-3. Update the attribution table in this README
+| Source | License | Repository |
+|--------|---------|------------|
+| Automattic | MIT | [agent-skills](https://github.com/Automattic/agent-skills) |
 
 ## License
 
-This repository is a collection. Each skill retains its original license:
-- Automattic skills: MIT License
-- Custom skills in `my-skills/`: MIT License (unless otherwise noted)
-
-See individual skill directories for specific license information.
+This repository is a collection. Each skill retains its original license.
+See [CREDITS.md](CREDITS.md) and individual LICENSE files for details.

@@ -1,106 +1,72 @@
-# Agent Skills for WordPress
+# Agent Skills Collection
 
-**Teach AI coding assistants how to build WordPress the right way.**
+A curated collection of AI agent skills for efficient development workflows.
 
-Agent Skills are portable bundles of instructions, checklists, and scripts that help AI assistants (Claude, Copilot, Codex, Cursor, etc.) understand WordPress development patterns, avoid common mistakes, and follow best practices.
+## What is this?
 
-<img width="2400" height="1260" alt="Agent Skills banner" src="https://github.com/user-attachments/assets/def9a6f9-cbba-4249-866f-b9a274b84188" />
+This repository aggregates skills from various sources to create a comprehensive toolkit for AI coding assistants (Claude Code, Copilot, Cursor, etc.). Each skill teaches AI assistants specific patterns, best practices, and procedures.
 
-## Why Agent Skills?
+## Structure
 
-AI coding assistants are powerful, but they often:
-- Generate outdated WordPress patterns (pre-Gutenberg, pre-block themes)
-- Miss critical security considerations in plugin development
-- Skip proper block deprecations, causing "Invalid block" errors
-- Ignore existing tooling in your repo
-
-Agent Skills solve this by giving AI assistants **expert-level WordPress knowledge** in a format they can actually use.
-
-## Available Skills
-
-| Skill | What it teaches |
-|-------|-----------------|
-| **wordpress-router** | Classifies WordPress repos and routes to the right workflow |
-| **wp-project-triage** | Detects project type, tooling, and versions automatically |
-| **wp-block-development** | Gutenberg blocks: `block.json`, attributes, rendering, deprecations |
-| **wp-block-themes** | Block themes: `theme.json`, templates, patterns, style variations |
-| **wp-plugin-development** | Plugin architecture, hooks, settings API, security |
-| **wp-interactivity-api** | Frontend interactivity with `data-wp-*` directives and stores |
-| **wp-abilities-api** | Capability-based permissions and REST API authentication |
-| **wp-wpcli-and-ops** | WP-CLI commands, automation, multisite, search-replace |
-| **wp-performance** | Profiling, caching, database optimization, Server-Timing |
-| **wp-phpstan** | PHPStan static analysis for WordPress projects (config, baselines, WP-specific typing) |
-| **wp-playground** | WordPress Playground for instant local environments |
+```
+agent-skills/
+├── skills/           # Third-party skills (synced from upstream sources)
+├── my-skills/        # Custom skills
+└── skills-manage.sh  # Management script
+```
 
 ## Quick Start
 
-### Install into your repo
-
 ```bash
-# Clone agent-skills
-git clone https://github.com/Automattic/agent-skills.git
-cd agent-skills
+# List all available skills
+./skills-manage.sh list
 
-# Build the distribution
-node shared/scripts/skillpack-build.mjs --clean
+# Sync with upstream sources
+./skills-manage.sh sync
 
-# Install into your WordPress project
-node shared/scripts/skillpack-install.mjs --dest=../your-wp-project --targets=codex,vscode
+# Create a new custom skill
+./skills-manage.sh new <skill-name>
+
+# Show info about a skill
+./skills-manage.sh info <skill-name>
 ```
 
-This copies skills into:
-- `.codex/skills/` for OpenAI Codex
-- `.github/skills/` for VS Code / GitHub Copilot
+## Sources & Attribution
 
-### Manual installation
+This collection includes skills from the following sources. All original authors retain their rights.
 
-Copy any skill folder from `skills/` into your project's instructions directory for your AI assistant.
+| Source | Skills | License | Link |
+|--------|--------|---------|------|
+| **Automattic** | WordPress development skills (blocks, themes, plugins, WP-CLI, etc.) | MIT | [agent-skills](https://github.com/Automattic/agent-skills) |
 
-## How It Works
+### Automattic Skills (MIT License)
 
-Each skill contains:
+The following WordPress-focused skills are from Automattic's agent-skills repository:
 
-```
-skills/wp-block-development/
-├── SKILL.md              # Main instructions (when to use, procedure, verification)
-├── references/           # Deep-dive docs on specific topics
-│   ├── block-json.md
-│   ├── deprecations.md
-│   └── ...
-└── scripts/              # Deterministic helpers (detection, validation)
-    └── list_blocks.mjs
-```
+- `wordpress-router` - Classifies WordPress repos and routes to the right workflow
+- `wp-project-triage` - Detects project type, tooling, and versions
+- `wp-block-development` - Gutenberg blocks, attributes, rendering, deprecations
+- `wp-block-themes` - Block themes, theme.json, templates, patterns
+- `wp-plugin-development` - Plugin architecture, hooks, settings API, security
+- `wp-interactivity-api` - Frontend interactivity with data-wp-* directives
+- `wp-abilities-api` - Capability-based permissions and REST API auth
+- `wp-wpcli-and-ops` - WP-CLI commands, automation, multisite
+- `wp-performance` - Profiling, caching, optimization
+- `wp-phpstan` - PHPStan static analysis for WordPress
+- `wp-playground` - WordPress Playground for local environments
 
-When you ask your AI assistant to work on WordPress code, it reads these skills and follows the documented procedures rather than guessing.
+## Adding New Sources
 
-## Compatibility
+To add skills from another repository:
 
-- **WordPress 6.9+** (PHP 7.2.24+)
-- Works with any AI assistant that supports project-level instructions
-
-## Contributing
-
-**We welcome contributions!** This project is a great way to share your WordPress expertise—you don't need to be a coding wizard. Most skills are written in Markdown, focusing on clear procedures and best practices.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to get started.
-
-Quick commands:
-
-```bash
-# Scaffold a new skill
-node shared/scripts/scaffold-skill.mjs <skill-name> "<description>"
-
-# Validate skills
-node eval/harness/run.mjs
-```
-
-## Documentation
-
-- [Authoring Guide](docs/authoring-guide.md) - How to create and improve skills
-- [Principles](docs/principles.md) - Design philosophy
-- [Packaging](docs/packaging.md) - Build and distribution
-- [Compatibility Policy](docs/compatibility-policy.md) - Version targeting
+1. Add it as a git remote: `git remote add <name> <url>`
+2. Fetch and merge: `git fetch <name> && git merge <name>/<branch>`
+3. Update the attribution table in this README
 
 ## License
 
-MIT
+This repository is a collection. Each skill retains its original license:
+- Automattic skills: MIT License
+- Custom skills in `my-skills/`: MIT License (unless otherwise noted)
+
+See individual skill directories for specific license information.

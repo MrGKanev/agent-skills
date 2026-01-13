@@ -69,6 +69,52 @@ curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/instal
 | `wp-phpstan` | PHPStan static analysis |
 | `wp-playground` | WordPress Playground environments |
 
+## Local Development
+
+If you clone this repo, you can use `skills-manage.sh` to manage skills and evals locally.
+
+### Skills Management
+
+```bash
+# List all skills
+./skills-manage.sh list
+
+# Create a new custom skill
+./skills-manage.sh new my-custom-skill
+
+# Show skill info
+./skills-manage.sh info wp-block-development
+
+# Sync from upstream
+./skills-manage.sh sync
+```
+
+### Evals (Test Scenarios)
+
+Evals are JSON files that define test scenarios for skills.
+
+```bash
+# List all evals
+./skills-manage.sh evals
+
+# Create a new custom eval
+./skills-manage.sh new-eval my-test-scenario
+
+# Run eval validation
+./skills-manage.sh run-evals
+```
+
+### Directory Structure
+
+```
+agent-skills/
+├── skills/           # Upstream skills (don't edit directly)
+├── my-skills/        # Your custom skills
+├── eval/scenarios/   # Upstream eval scenarios
+├── my-evals/         # Your custom eval scenarios
+└── skills-manage.sh  # Management script
+```
+
 ## Sources & Attribution
 
 All original authors retain their rights. See [CREDITS.md](CREDITS.md) for details.

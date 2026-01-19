@@ -1,13 +1,19 @@
 # Agent Skills Collection
 
-A curated collection of AI agent skills for efficient development workflows.
+A curated collection of AI agent skills for efficient development workflows. Includes safety hooks to prevent destructive commands.
+
+## Features
+
+- **Skills**: Reusable knowledge packs for AI coding assistants
+- **Safety Hooks**: Blocks destructive git commands (`git reset --hard`, `git push --force`, etc.)
+- **Multi-platform**: Works with Claude Code, GitHub Copilot, and Cursor
 
 ## Installation
 
 ### One-liner (recommended)
 
 ```bash
-# For Claude Code (global)
+# For Claude Code (global) - includes safety hooks
 curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash
 
 # For GitHub Copilot
@@ -43,13 +49,32 @@ curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/instal
 curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash -s -- --list
 ```
 
-## Where skills are installed
+## What Gets Installed
 
-| Target | Global location | Project location |
-|--------|-----------------|------------------|
-| Claude Code | `~/.claude/skills/` | `.claude/skills/` |
-| GitHub Copilot | `~/.github/skills/` | `.github/skills/` |
-| Cursor | `~/.cursor/skills/` | `.cursor/skills/` |
+| Target | Skills | Safety |
+|--------|--------|--------|
+| Claude Code | `~/.claude/skills/` | `~/.claude/hooks/` (blocks commands) |
+| GitHub Copilot | `~/.github/skills/` | `copilot-instructions.md` (text rules) |
+| Cursor | `~/.cursor/skills/` | `.cursor/rules/` (text rules) |
+
+> **Note**: Only Claude Code has real protection via executable hooks. Copilot and Cursor receive text-based guidelines that the AI may not always follow.
+
+## Safety Hooks
+
+The installer includes a safety hook that blocks destructive commands before they execute.
+
+**Blocked commands:**
+- `git reset --hard` - destroys uncommitted changes
+- `git checkout -- .` - discards all changes
+- `git clean -f` - removes untracked files
+- `git push --force` - overwrites remote history
+- `git branch -D` - force deletes branches
+- `rm -rf` on project directories
+
+**Safe alternatives suggested:**
+- Use `git stash` before destructive operations
+- Use `git clean --dry-run` to preview
+- Use `git push --force-with-lease` instead of `--force`
 
 ## Available Skills
 
@@ -68,6 +93,25 @@ curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/instal
 | `wp-performance` | Profiling, caching, optimization |
 | `wp-phpstan` | PHPStan static analysis |
 | `wp-playground` | WordPress Playground environments |
+
+### Research & Academic Writing
+
+| Skill | Description |
+|-------|-------------|
+| `academic-writing` | Academic manuscript preparation and formatting |
+| `grant-writing` | Grant proposal writing assistance |
+| `hypothesis-dev` | Research hypothesis development |
+| `lit-review` | Systematic literature review methodology |
+| `manuscript-review` | Peer review and manuscript feedback |
+| `paper-search` | Academic paper discovery and search |
+| `reference-management` | Citation and bibliography management |
+
+### Development Workflow
+
+| Skill | Description |
+|-------|-------------|
+| `ask-questions-if-underspecified` | Clarify requirements before implementing |
+| `avoid-feature-creep` | Prevent scope creep, stay focused on MVP |
 
 ## Local Development
 
@@ -104,24 +148,13 @@ Evals are JSON files that define test scenarios for skills.
 ./skills-manage.sh run-evals
 ```
 
-### Directory Structure
-
-```
-agent-skills/
-├── skills/           # Upstream skills (don't edit directly)
-├── my-skills/        # Your custom skills
-├── eval/scenarios/   # Upstream eval scenarios
-├── my-evals/         # Your custom eval scenarios
-└── skills-manage.sh  # Management script
-```
-
 ## Sources & Attribution
 
 All original authors retain their rights. See [CREDITS.md](CREDITS.md) for details.
 
-| Source | License | Repository |
-|--------|---------|------------|
-| Automattic | MIT | [agent-skills](https://github.com/Automattic/agent-skills) |
+| Source | License | Skills |
+|--------|---------|--------|
+| [Automattic](https://github.com/Automattic/agent-skills) | MIT | WordPress development skills |
 
 ## License
 

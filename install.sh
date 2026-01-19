@@ -170,7 +170,91 @@ main() {
             done
         fi
 
-        echo -e "${GREEN}Installed to: $skills_dir${NC}"
+        echo -e "${GREEN}Installed skills to: $skills_dir${NC}"
+
+        # Install safety features based on target
+        if [ -d "$TEMP_DIR/hooks" ]; then
+            case $target in
+                claude)
+                    # Claude: Install executable hooks (real protection)
+                    local hooks_dir="$install_dir/hooks"
+                    echo -e "${YELLOW}Installing safety hooks to $hooks_dir...${NC}"
+
+                    mkdir -p "$hooks_dir"
+
+                    # Copy hook scripts
+                    cp "$TEMP_DIR/hooks/"*.py "$hooks_dir/" 2>/dev/null || true
+                    chmod +x "$hooks_dir/"*.py 2>/dev/null || true
+
+                    # Merge or create settings.json with hooks config
+                    local settings_file="$install_dir/settings.json"
+                    local hooks_settings="$TEMP_DIR/hooks/settings.json"
+
+                    if [ -f "$hooks_settings" ]; then
+                        if [ -f "$settings_file" ]; then
+                            cp "$settings_file" "$settings_file.backup"
+                            echo -e "${YELLOW}Existing settings.json backed up${NC}"
+
+                            python3 -c "
+import json
+try:
+    with open('$settings_file', 'r') as f:
+        existing = json.load(f)
+except:
+    existing = {}
+with open('$hooks_settings', 'r') as f:
+    hooks = json.load(f)
+if 'hooks' not in existing:
+    existing['hooks'] = {}
+for event, event_hooks in hooks.get('hooks', {}).items():
+    if event not in existing['hooks']:
+        existing['hooks'][event] = []
+    existing['hooks'][event].extend(event_hooks)
+with open('$settings_file', 'w') as f:
+    json.dump(existing, f, indent=2)
+" 2>/dev/null || cp "$hooks_settings" "$settings_file"
+                        else
+                            cp "$hooks_settings" "$settings_file"
+                        fi
+                        echo -e "${GREEN}Installed safety hooks (blocks destructive commands)${NC}"
+                    fi
+                    ;;
+
+                copilot)
+                    # Copilot: Add safety rules to instructions file
+                    local instructions_file="$install_dir/copilot-instructions.md"
+                    local safety_rules="$TEMP_DIR/hooks/SAFETY_RULES.md"
+
+                    if [ -f "$safety_rules" ]; then
+                        echo -e "${YELLOW}Installing safety rules to copilot-instructions.md...${NC}"
+
+                        if [ -f "$instructions_file" ]; then
+                            # Append to existing file if not already present
+                            if ! grep -q "Git Safety Rules" "$instructions_file" 2>/dev/null; then
+                                echo "" >> "$instructions_file"
+                                cat "$safety_rules" >> "$instructions_file"
+                            fi
+                        else
+                            cp "$safety_rules" "$instructions_file"
+                        fi
+                        echo -e "${GREEN}Installed safety rules (text-based guidance)${NC}"
+                    fi
+                    ;;
+
+                cursor)
+                    # Cursor: Add safety rules to rules file
+                    local rules_dir="$install_dir/rules"
+                    local safety_rules="$TEMP_DIR/hooks/SAFETY_RULES.md"
+
+                    if [ -f "$safety_rules" ]; then
+                        echo -e "${YELLOW}Installing safety rules to .cursor/rules...${NC}"
+                        mkdir -p "$rules_dir"
+                        cp "$safety_rules" "$rules_dir/git-safety.md"
+                        echo -e "${GREEN}Installed safety rules (text-based guidance)${NC}"
+                    fi
+                    ;;
+            esac
+        fi
     }
 
     if [ "$TARGET" = "all" ]; then
@@ -186,10 +270,40 @@ main() {
     echo ""
 
     # Show post-install info
-    if [ "$TARGET" = "claude" ] || [ "$TARGET" = "all" ]; then
-        echo "For Claude Code, skills are now available globally."
-        echo "Restart Claude Code or start a new session to use them."
-    fi
+    case $TARGET in
+        claude)
+            echo "For Claude Code:"
+            echo "  - Skills installed globally"
+            echo "  - Safety hooks installed (blocks destructive git commands)"
+            echo ""
+            echo "Restart Claude Code to activate."
+            ;;
+        copilot)
+            echo "For GitHub Copilot:"
+            echo "  - Skills installed"
+            echo "  - Safety rules added to copilot-instructions.md"
+            echo ""
+            echo "Note: Safety rules are text-based guidance only."
+            ;;
+        cursor)
+            echo "For Cursor:"
+            echo "  - Skills installed"
+            echo "  - Safety rules added to .cursor/rules/"
+            echo ""
+            echo "Note: Safety rules are text-based guidance only."
+            ;;
+        all)
+            echo "Installed to all targets:"
+            echo ""
+            echo "Claude Code:"
+            echo "  - Safety hooks (blocks destructive commands)"
+            echo ""
+            echo "Copilot & Cursor:"
+            echo "  - Safety rules (text-based guidance)"
+            echo ""
+            echo "Restart your IDE/editor to activate."
+            ;;
+    esac
 }
 
 main "$@"

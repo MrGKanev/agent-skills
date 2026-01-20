@@ -143,6 +143,12 @@ The installer includes a safety hook that blocks destructive commands before the
 | `ask-questions-if-underspecified` | Clarify requirements before implementing |
 | `avoid-feature-creep` | Prevent scope creep, stay focused on MVP |
 
+### SEO & AI Marketing
+
+| Skill | Description |
+|-------|-------------|
+| `aeo` | Answer Engine Optimization - optimize content for AI assistant recommendations (ChatGPT, Perplexity, Claude, Gemini) |
+
 ## Local Development
 
 If you clone this repo, you can use `skills-manage.sh` to manage skills and evals locally.

@@ -43,6 +43,15 @@ curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/instal
 curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash -s -- --tag=v1.0.0
 ```
 
+### Add shell alias (optional)
+
+```bash
+# Add 'claud' alias for 'claude --dangerously-skip-permissions'
+curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash -s -- --alias
+```
+
+This adds `alias claud="claude --dangerously-skip-permissions"` to your shell config (`.zshrc` or `.bashrc`). After installation, restart your terminal or run `source ~/.zshrc` to use it. Only works with Claude Code target.
+
 ### List available skills
 
 ```bash

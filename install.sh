@@ -15,6 +15,7 @@ NC='\033[0m'
 REPO="MrGKanev/agent-skills"
 BRANCH="master"
 TARGET="claude"  # claude, copilot, or cursor
+INSTALL_ALIAS=false
 
 show_help() {
     echo "Agent Skills Installer"
@@ -27,6 +28,7 @@ show_help() {
     echo "  --target=TARGET   Where to install: claude, copilot, cursor, all (default: claude)"
     echo "  --tag=TAG         Install specific version/tag (default: latest)"
     echo "  --project         Install to current project instead of global"
+    echo "  --alias           Add 'claud' shell alias for 'claude --dangerously-skip-permissions'"
     echo "  --list            List available skills and exit"
     echo "  --help            Show this help"
     echo ""
@@ -57,6 +59,9 @@ for arg in "$@"; do
             ;;
         --project)
             PROJECT_INSTALL=true
+            ;;
+        --alias)
+            INSTALL_ALIAS=true
             ;;
         --list)
             LIST_ONLY=true
@@ -93,6 +98,39 @@ get_install_dir() {
             echo "$base_dir/.claude"
             ;;
     esac
+}
+
+# Install shell alias for Claude Code
+install_claud_alias() {
+    local shell_config=""
+    local alias_line='alias claud="claude --dangerously-skip-permissions"'
+
+    # Detect shell config file
+    if [ -n "$ZSH_VERSION" ] || [ "$SHELL" = "/bin/zsh" ] || [ -f "$HOME/.zshrc" ]; then
+        shell_config="$HOME/.zshrc"
+    elif [ -n "$BASH_VERSION" ] || [ "$SHELL" = "/bin/bash" ] || [ -f "$HOME/.bashrc" ]; then
+        shell_config="$HOME/.bashrc"
+    fi
+
+    if [ -z "$shell_config" ]; then
+        echo -e "${YELLOW}Could not detect shell config file. Add manually:${NC}"
+        echo "  $alias_line"
+        return 1
+    fi
+
+    # Check if alias already exists
+    if grep -q 'alias claud=' "$shell_config" 2>/dev/null; then
+        echo -e "${YELLOW}Alias 'claud' already exists in $shell_config${NC}"
+        return 0
+    fi
+
+    # Add alias to config file
+    echo "" >> "$shell_config"
+    echo "# Claude Code alias (skip permissions prompt)" >> "$shell_config"
+    echo "$alias_line" >> "$shell_config"
+
+    echo -e "${GREEN}Added alias 'claud' to $shell_config${NC}"
+    echo -e "${YELLOW}Run 'source $shell_config' or restart terminal to use it${NC}"
 }
 
 # Main installation
@@ -263,6 +301,14 @@ with open('$settings_file', 'w') as f:
         install_to_target "cursor"
     else
         install_to_target "$TARGET"
+    fi
+
+    # Install shell alias if requested (only for Claude target)
+    if [ "$INSTALL_ALIAS" = true ]; then
+        if [ "$TARGET" = "claude" ] || [ "$TARGET" = "all" ]; then
+            echo ""
+            install_claud_alias
+        fi
     fi
 
     echo ""

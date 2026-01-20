@@ -43,6 +43,27 @@ curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/instal
 curl -fsSL https://raw.githubusercontent.com/MrGKanev/agent-skills/master/install.sh | bash -s -- --tag=v1.0.0
 ```
 
+### Install from local repo
+
+If you've cloned this repository and have custom skills in `my-skills/`, use `--local` to install directly from your local copy:
+
+```bash
+# Clone the repo
+git clone https://github.com/MrGKanev/agent-skills.git
+cd agent-skills
+
+# Install from local (includes my-skills/)
+./install.sh --local
+
+# Preview what will be installed
+./install.sh --local --list
+```
+
+This is useful when:
+- You have custom skills in `my-skills/` that aren't pushed to GitHub
+- You want to test changes before committing
+- You're developing new skills locally
+
 ### Add shell alias (optional)
 
 ```bash
@@ -125,6 +146,28 @@ The installer includes a safety hook that blocks destructive commands before the
 ## Local Development
 
 If you clone this repo, you can use `skills-manage.sh` to manage skills and evals locally.
+
+### Quick Start
+
+```bash
+# Clone and install locally (includes your custom my-skills/)
+git clone https://github.com/MrGKanev/agent-skills.git
+cd agent-skills
+./install.sh --local
+```
+
+### Directory Structure
+
+```
+agent-skills/
+├── skills/          # Upstream skills (from Automattic, etc.)
+├── my-skills/       # Your custom skills (not synced upstream)
+├── hooks/           # Safety hooks for Claude Code
+├── install.sh       # Installer script
+└── skills-manage.sh # Management script
+```
+
+**Note**: `my-skills/` is for your personal/custom skills. These are installed with `--local` but won't be included when others install via curl from GitHub (unless you push them).
 
 ### Skills Management
 

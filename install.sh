@@ -16,6 +16,7 @@ REPO="MrGKanev/agent-skills"
 BRANCH="master"
 TARGET="claude"  # claude, copilot, or cursor
 INSTALL_ALIAS=false
+LOCAL_INSTALL=false
 
 show_help() {
     echo "Agent Skills Installer"
@@ -27,6 +28,7 @@ show_help() {
     echo "Options:"
     echo "  --target=TARGET   Where to install: claude, copilot, cursor, all (default: claude)"
     echo "  --tag=TAG         Install specific version/tag (default: latest)"
+    echo "  --local           Install from local repo instead of downloading from GitHub"
     echo "  --project         Install to current project instead of global"
     echo "  --alias           Add 'claud' shell alias for 'claude --dangerously-skip-permissions'"
     echo "  --list            List available skills and exit"
@@ -35,6 +37,9 @@ show_help() {
     echo "Examples:"
     echo "  # Install to Claude Code (global)"
     echo "  curl -fsSL https://raw.githubusercontent.com/$REPO/master/install.sh | bash"
+    echo ""
+    echo "  # Install from local repo (includes my-skills)"
+    echo "  ./install.sh --local"
     echo ""
     echo "  # Install to current project for Copilot"
     echo "  curl -fsSL https://raw.githubusercontent.com/$REPO/master/install.sh | bash -s -- --target=copilot --project"
@@ -59,6 +64,9 @@ for arg in "$@"; do
             ;;
         --project)
             PROJECT_INSTALL=true
+            ;;
+        --local)
+            LOCAL_INSTALL=true
             ;;
         --alias)
             INSTALL_ALIAS=true
@@ -138,22 +146,39 @@ main() {
     echo -e "${BLUE}Agent Skills Installer${NC}"
     echo ""
 
-    # Create temp directory
-    TEMP_DIR=$(mktemp -d)
-    trap "rm -rf $TEMP_DIR" EXIT
+    # Determine source directory
+    if [ "$LOCAL_INSTALL" = true ]; then
+        # Find the repo root (where install.sh lives)
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-    echo -e "${YELLOW}Downloading skills...${NC}"
+        # Verify this is a valid agent-skills repo
+        if [ ! -d "$SCRIPT_DIR/skills" ]; then
+            echo -e "${RED}Error: Not a valid agent-skills repository${NC}"
+            echo "Expected to find 'skills/' directory in $SCRIPT_DIR"
+            exit 1
+        fi
 
-    if [ -n "$TAG" ]; then
-        DOWNLOAD_URL="https://github.com/$REPO/archive/refs/tags/$TAG.tar.gz"
-        echo "Version: $TAG"
+        TEMP_DIR="$SCRIPT_DIR"
+        echo -e "${YELLOW}Installing from local repo...${NC}"
+        echo "Source: $SCRIPT_DIR"
     else
-        DOWNLOAD_URL="https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz"
-        echo "Branch: $BRANCH"
-    fi
+        # Create temp directory for download
+        TEMP_DIR=$(mktemp -d)
+        trap "rm -rf $TEMP_DIR" EXIT
 
-    # Download and extract
-    curl -fsSL "$DOWNLOAD_URL" | tar -xz -C "$TEMP_DIR" --strip-components=1
+        echo -e "${YELLOW}Downloading skills...${NC}"
+
+        if [ -n "$TAG" ]; then
+            DOWNLOAD_URL="https://github.com/$REPO/archive/refs/tags/$TAG.tar.gz"
+            echo "Version: $TAG"
+        else
+            DOWNLOAD_URL="https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz"
+            echo "Branch: $BRANCH"
+        fi
+
+        # Download and extract
+        curl -fsSL "$DOWNLOAD_URL" | tar -xz -C "$TEMP_DIR" --strip-components=1
+    fi
 
     # List only mode
     if [ "$LIST_ONLY" = true ]; then

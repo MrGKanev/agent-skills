@@ -58,6 +58,7 @@ All original authors retain full rights to their work.
 | referral-program | Design referral and affiliate programs |
 | schema-markup | Add structured data and rich snippets |
 | seo-audit | Audit technical and on-page SEO |
+| signup-flow-cro | Optimize signup and registration flows |
 | social-content | Create and schedule social media content |
 
 **Copyright:** Copyright (c) coreyhaines31

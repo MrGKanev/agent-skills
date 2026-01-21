@@ -1,0 +1,20 @@
+{
+  "sources": [
+    {
+      "name": "automattic",
+      "description": "WordPress development skills from Automattic",
+      "repo": "https://github.com/Automattic/agent-skills",
+      "branch": "trunk",
+      "skillsPath": "skills",
+      "license": "MIT"
+    },
+    {
+      "name": "marketingskills",
+      "description": "Marketing & CRO skills from coreyhaines31",
+      "repo": "https://github.com/coreyhaines31/marketingskills",
+      "branch": "main",
+      "skillsPath": "skills",
+      "license": "MIT"
+    }
+  ]
+}

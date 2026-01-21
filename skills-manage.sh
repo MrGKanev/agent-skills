@@ -461,6 +461,25 @@ case "${1:-help}" in
     sync)
         sync_upstream
         ;;
+    sources)
+        list_sources
+        ;;
+    sync-sources)
+        sync_all_sources
+        ;;
+    sync-source)
+        if [ -z "$2" ]; then
+            echo -e "${RED}Error: Please provide a source name${NC}"
+            echo "Usage: ./skills-manage.sh sync-source <source-name>"
+            echo ""
+            echo "Available sources:"
+            cat "$SOURCES_FILE" | parse_json '.sources[].name' | tr -d '"' | while read name; do
+                echo "  - $name"
+            done
+            exit 1
+        fi
+        sync_single_source "$2"
+        ;;
     list)
         list_skills
         ;;

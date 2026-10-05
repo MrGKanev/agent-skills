@@ -47,3 +47,6 @@ jobs:
           skills-ref validate skills/wp-wpcli-and-ops
           skills-ref validate skills/wp-performance
           skills-ref validate skills/wp-playground
+          skills-ref validate skills/wp-phpstan
+          skills-ref validate skills/wp-rest-api
+          skills-ref validate skills/wpds

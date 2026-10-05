@@ -184,7 +184,7 @@ sync_single_source() {
     for skill_dir in "$temp_dir/$skills_path"/*/; do
         if [ -d "$skill_dir" ]; then
             local skill_name=$(basename "$skill_dir")
-            cp -r "$skill_dir" "$SKILLS_DIR/"
+            cp -r "${skill_dir%/}" "$SKILLS_DIR/"
             echo -e "  ${GREEN}✓${NC} $skill_name"
             ((copied++))
         fi

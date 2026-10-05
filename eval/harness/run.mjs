@@ -105,6 +105,7 @@ function main() {
       `Description too long in ${path.relative(repoRoot, skillPath)} (${fm.description.length} chars)`
     );
 
+    if (!/^(wp-|wordpress-)/.test(expectedName)) continue; // WP compat contract applies to WordPress skills only
     const compatibility = fm._raw.compatibility;
     assert(compatibility, `Missing frontmatter 'compatibility' in: ${path.relative(repoRoot, skillPath)}`);
     assert(

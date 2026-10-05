@@ -24,6 +24,8 @@ All original authors retain full rights to their work.
 | wp-performance | Performance optimization |
 | wp-phpstan | PHPStan for WordPress |
 | wp-playground | WordPress Playground |
+| wp-rest-api | REST API routes, controllers, schemas |
+| wpds | WordPress Design System |
 
 **Copyright:** Copyright (c) Automattic Inc.
 
@@ -35,33 +37,19 @@ All original authors retain full rights to their work.
 **License:** MIT
 **Skills included:**
 
-| Skill | Description |
-|-------|-------------|
-| ab-test-setup | Plan and implement A/B tests |
-| analytics-tracking | Set up tracking and measurement |
-| competitor-alternatives | Competitor comparison and alternative pages |
-| copy-editing | Edit and polish existing copy |
-| copywriting | Write or improve marketing copy |
-| email-sequence | Build email sequences and drip campaigns |
-| form-cro | Optimize lead capture and contact forms |
-| free-tool-strategy | Plan engineering-as-marketing tools |
-| launch-strategy | Product launches and feature announcements |
-| marketing-ideas | 140 SaaS marketing ideas and strategies |
-| marketing-psychology | 70+ mental models for marketing |
-| onboarding-cro | Improve user activation and onboarding |
-| page-cro | Conversion optimization for any marketing page |
-| paid-ads | Create and optimize paid ad campaigns |
-| paywall-upgrade-cro | In-app paywalls and upgrade screens |
-| popup-cro | Create/optimize popups and modals |
-| pricing-strategy | Design pricing, packaging, and monetization |
-| programmatic-seo | Build SEO pages at scale |
-| referral-program | Design referral and affiliate programs |
-| schema-markup | Add structured data and rich snippets |
-| seo-audit | Audit technical and on-page SEO |
-| signup-flow-cro | Optimize signup and registration flows |
-| social-content | Create and schedule social media content |
+Synced from upstream v2 (`./skills-manage.sh sync-source marketingskills`); see the repo for per-skill descriptions.
+
+`ab-testing`, `ad-creative`, `ads`, `ai-seo`, `analytics`, `aso`, `attribution`, `churn-prevention`, `co-marketing`, `cold-email`, `community-marketing`, `competitor-profiling`, `competitors`, `content-strategy`, `copy-editing`, `copywriting`, `cro`, `customer-research`, `directory-submissions`, `emails`, `events`, `free-tools`, `image`, `influencer-marketing`, `launch`, `lead-magnets`, `marketing-council`, `marketing-ideas`, `marketing-loops`, `marketing-plan`, `marketing-psychology`, `offers`, `onboarding`, `paywalls`, `popups`, `pricing`, `product-marketing`, `programmatic-seo`, `prospecting`, `public-relations`, `referrals`, `revops`, `sales-enablement`, `schema`, `seo-audit`, `signup`, `site-architecture`, `sms`, `social`, `video`, `wordpress-router`
 
 **Copyright:** Copyright (c) coreyhaines31
+
+---
+
+## enesgules (dotfiles)
+
+**Repository:** https://github.com/enesgules/dotfiles (`skills/optimise-github-actions`)
+**License:** none declared in the repository; included with attribution, confirm with the author before redistributing.
+**Skills included:** `optimise-github-actions` (in `my-skills/`)
 
 ---
 

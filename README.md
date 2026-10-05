@@ -123,6 +123,8 @@ The installer includes a safety hook that blocks destructive commands before the
 | `wp-performance` | Profiling, caching, optimization |
 | `wp-phpstan` | PHPStan static analysis |
 | `wp-playground` | WordPress Playground environments |
+| `wp-rest-api` | REST API routes, controllers, schemas |
+| `wpds` | WordPress Design System UIs, components, tokens |
 
 ### Research & Academic Writing
 
@@ -142,34 +144,19 @@ The installer includes a safety hook that blocks destructive commands before the
 |-------|-------------|
 | `ask-questions-if-underspecified` | Clarify requirements before implementing |
 | `avoid-feature-creep` | Prevent scope creep, stay focused on MVP |
+| `optimise-github-actions` | Measure and cut GitHub Actions cost and CI time (from enesgules) |
 
 ### Marketing & CRO (from coreyhaines31)
 
-| Skill | Description |
-|-------|-------------|
-| `ab-test-setup` | Plan and implement A/B tests |
-| `analytics-tracking` | Set up tracking and measurement |
-| `competitor-alternatives` | Competitor comparison and alternative pages |
-| `copy-editing` | Edit and polish existing copy |
-| `copywriting` | Write or improve marketing copy |
-| `email-sequence` | Build email sequences and drip campaigns |
-| `form-cro` | Optimize lead capture and contact forms |
-| `free-tool-strategy` | Plan engineering-as-marketing tools |
-| `launch-strategy` | Product launches and feature announcements |
-| `marketing-ideas` | 140 SaaS marketing ideas and strategies |
-| `marketing-psychology` | 70+ mental models for marketing |
-| `onboarding-cro` | Improve user activation and onboarding |
-| `page-cro` | Conversion optimization for any marketing page |
-| `paid-ads` | Create and optimize paid ad campaigns |
-| `paywall-upgrade-cro` | In-app paywalls and upgrade screens |
-| `popup-cro` | Create/optimize popups and modals |
-| `pricing-strategy` | Design pricing, packaging, and monetization |
-| `programmatic-seo` | Build SEO pages at scale |
-| `referral-program` | Design referral and affiliate programs |
-| `schema-markup` | Add structured data and rich snippets |
-| `seo-audit` | Audit technical and on-page SEO |
-| `signup-flow-cro` | Optimize signup and registration flows |
-| `social-content` | Create and schedule social media content |
+Names follow upstream v2 (renamed from the old `*-cro` / `*-strategy` names).
+
+| Area | Skills |
+|------|--------|
+| Strategy & research | `marketing-plan`, `marketing-ideas`, `marketing-psychology`, `marketing-council`, `marketing-loops`, `product-marketing`, `customer-research`, `competitors`, `competitor-profiling`, `offers` |
+| CRO & experiments | `cro`, `signup`, `onboarding`, `paywalls`, `popups`, `pricing`, `ab-testing`, `analytics`, `attribution` |
+| Content & copy | `copywriting`, `copy-editing`, `content-strategy`, `social`, `emails`, `lead-magnets`, `image`, `video` |
+| SEO | `seo-audit`, `programmatic-seo`, `schema`, `site-architecture`, `ai-seo`, `aso`, `directory-submissions` |
+| Paid, outbound & growth | `ads`, `ad-creative`, `cold-email`, `sms`, `prospecting`, `sales-enablement`, `revops`, `launch`, `free-tools`, `referrals`, `churn-prevention`, `community-marketing`, `co-marketing`, `events`, `influencer-marketing`, `public-relations` |
 
 ### SEO & AI Marketing
 

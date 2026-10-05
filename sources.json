@@ -15,6 +15,14 @@
       "branch": "main",
       "skillsPath": "skills",
       "license": "MIT"
+    },
+    {
+      "name": "i-have-adhd",
+      "description": "ADHD-friendly output style from ayghri",
+      "repo": "https://github.com/ayghri/i-have-adhd",
+      "branch": "main",
+      "skillsPath": "skills",
+      "license": "MIT"
     }
   ]
 }

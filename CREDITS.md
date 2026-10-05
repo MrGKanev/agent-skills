@@ -53,6 +53,16 @@ Synced from upstream v2 (`./skills-manage.sh sync-source marketingskills`); see 
 
 ---
 
+## ayghri (i-have-adhd)
+
+**Repository:** https://github.com/ayghri/i-have-adhd
+**License:** MIT
+**Skills included:** `i-have-adhd`
+
+**Copyright:** Copyright (c) 2026 Ayoub Ghriss
+
+---
+
 ## Adding Credits for New Sources
 
 When adding skills from a new source, add a section here with:

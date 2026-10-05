@@ -145,6 +145,7 @@ The installer includes a safety hook that blocks destructive commands before the
 | `ask-questions-if-underspecified` | Clarify requirements before implementing |
 | `avoid-feature-creep` | Prevent scope creep, stay focused on MVP |
 | `optimise-github-actions` | Measure and cut GitHub Actions cost and CI time (from enesgules) |
+| `i-have-adhd` | ADHD-friendly output: action first, numbered steps, fewer tangents (from ayghri) |
 
 ### Marketing & CRO (from coreyhaines31)
 
@@ -229,6 +230,7 @@ All original authors retain their rights. See [CREDITS.md](CREDITS.md) for detai
 |--------|---------|--------|
 | [Automattic](https://github.com/Automattic/agent-skills) | MIT | WordPress development skills |
 | [coreyhaines31](https://github.com/coreyhaines31/marketingskills) | MIT | Marketing & CRO skills |
+| [ayghri](https://github.com/ayghri/i-have-adhd) | MIT | ADHD-friendly output style |
 
 ## License
 
